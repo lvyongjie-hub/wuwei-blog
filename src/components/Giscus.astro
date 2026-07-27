@@ -1,0 +1,41 @@
+---
+const repo = import.meta.env.PUBLIC_GISCUS_REPO;
+const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID;
+const categoryId = import.meta.env.PUBLIC_GISCUS_CATEGORY_ID;
+const configured = Boolean(repo && repoId && categoryId);
+---
+
+<section aria-label="评论区">
+  {
+    configured ? (
+      <>
+        <div
+          class="giscus"
+          data-repo={repo}
+          data-repo-id={repoId}
+          data-category="工程讨论"
+          data-category-id={categoryId}
+        />
+        <script
+          is:inline
+          src="https://giscus.app/client.js"
+          data-repo={repo}
+          data-repo-id={repoId}
+          data-category="工程讨论"
+          data-category-id={categoryId}
+          data-mapping="pathname"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="top"
+          data-theme="preferred_color_scheme"
+          data-lang="zh-CN"
+          crossorigin="anonymous"
+          async
+        />
+      </>
+    ) : (
+      <div class="giscus-placeholder">评论区会在 GitHub Discussions 配置完成后开放。</div>
+    )
+  }
+</section>

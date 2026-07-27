@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { BOOK_STATUS } from '@/lib/site';
+import StatusStamp from './StatusStamp.astro';
+
+interface Props {
+  book: CollectionEntry<'books'>;
+  articleCount?: number;
+}
+
+const { book, articleCount = 0 } = Astro.props;
+const data = book.data;
+---
+
+<article class="paper-card book-card" style={`--book-accent: ${data.accent}`}>
+  <div class="book-spine">knowledge book</div>
+  <h2 class="card-title"><a href={`/study/${book.id}/`}>{data.title}</a></h2>
+  {data.titleEn && <p class="card-meta">{data.titleEn}</p>}
+  <p class="card-description">{data.description}</p>
+  <div class="card-footer">
+    <div class="card-meta">
+      <StatusStamp label={BOOK_STATUS[data.status]} />
+      <span>{articleCount} 篇</span>
+    </div>
+    <a class="section-link" href={`/study/${book.id}/`} aria-label={`打开${data.title}`}>
+      打开书页 <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</article>

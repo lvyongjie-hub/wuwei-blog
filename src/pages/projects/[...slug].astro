@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import ProjectEvidence from '@/components/ProjectEvidence.astro';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import { PROJECT_STATUS, SITE } from '@/lib/site';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+export const getStaticPaths = (async () => {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props;
+const { Content, headings } = await render(project);
+const sourcePath =
+  project.filePath?.replaceAll('\\', '/').split('/src/content/')[1] ?? `projects/${project.id}.mdx`;
+---
+
+<ArticleLayout
+  title={project.data.title}
+  titleEn={project.data.titleEn}
+  description={project.data.description}
+  eyebrow={`PROJECT / ${project.data.year} / ${PROJECT_STATUS[project.data.status]}`}
+  publishedAt={project.data.publishedAt}
+  updatedAt={project.data.updatedAt}
+  tags={project.data.tags}
+  headings={headings}
+  sidebarTitle="项目档案"
+  sidebarItems={[
+    { href: '/projects/', label: '← 返回项目列表' },
+    { href: `/projects/${project.id}/`, label: project.data.title, current: true },
+  ]}
+  sourceHref={`${SITE.repository}/blob/main/src/content/${sourcePath}`}
+  sourceLabel="查看本页 MDX / 建议修改"
+  showComments
+  ogImage={`/og/project-${project.id.replaceAll('/', '-')}.svg`}
+  contentType="project"
+>
+  <ProjectEvidence
+    verification={project.data.verification}
+    pendingVerification={project.data.pendingVerification}
+  />
+  <Content />
+</ArticleLayout>

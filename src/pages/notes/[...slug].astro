@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+}
+
+export const getStaticPaths = (async () => {
+  const notes = await getCollection('notes', ({ data }) => !data.draft);
+  return notes.map((note) => ({ params: { slug: note.id }, props: { note } }));
+}) satisfies GetStaticPaths;
+
+const { note } = Astro.props;
+const { Content, headings } = await render(note);
+---
+
+<ArticleLayout
+  title={note.data.title}
+  titleEn={note.data.titleEn}
+  description={note.data.description}
+  eyebrow={note.data.kind === 'short' ? 'SHORT NOTE' : 'LONG NOTE'}
+  publishedAt={note.data.publishedAt}
+  updatedAt={note.data.updatedAt}
+  tags={note.data.tags}
+  headings={headings}
+  sidebarTitle="随笔"
+  sidebarItems={[
+    { href: '/notes/', label: '← 返回时间流' },
+    { href: `/notes/${note.id}/`, label: note.data.title, current: true },
+  ]}
+  showSourceNote={false}
+  ogImage={`/og/note-${note.id.replaceAll('/', '-')}.svg`}
+  contentType="note"
+>
+  <Content />
+</ArticleLayout>

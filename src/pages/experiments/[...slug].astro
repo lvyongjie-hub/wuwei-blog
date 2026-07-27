@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import { EXPERIMENT_STATUS, SITE } from '@/lib/site';
+
+interface Props {
+  experiment: CollectionEntry<'experiments'>;
+}
+
+export const getStaticPaths = (async () => {
+  const experiments = await getCollection('experiments', ({ data }) => !data.draft);
+  return experiments.map((experiment) => ({
+    params: { slug: experiment.id },
+    props: { experiment },
+  }));
+}) satisfies GetStaticPaths;
+
+const { experiment } = Astro.props;
+const { Content, headings } = await render(experiment);
+const sourcePath =
+  experiment.filePath?.replaceAll('\\', '/').split('/src/content/')[1] ??
+  `experiments/${experiment.id}.md`;
+---
+
+<ArticleLayout
+  title={experiment.data.title}
+  titleEn={experiment.data.titleEn}
+  description={experiment.data.description}
+  eyebrow={`EXPERIMENT / ${EXPERIMENT_STATUS[experiment.data.status]}`}
+  publishedAt={experiment.data.publishedAt}
+  updatedAt={experiment.data.updatedAt}
+  tags={experiment.data.tags}
+  headings={headings}
+  sidebarTitle="实验记录"
+  sidebarItems={[
+    { href: '/experiments/', label: '← 返回实验列表' },
+    { href: `/experiments/${experiment.id}/`, label: experiment.data.title, current: true },
+  ]}
+  sourceHref={`${SITE.repository}/blob/main/src/content/${sourcePath}`}
+  sourceLabel="查看实验源文件 / 建议修改"
+  showComments
+  ogImage={`/og/experiment-${experiment.id.replaceAll('/', '-')}.svg`}
+  contentType="experiment"
+>
+  <Content />
+</ArticleLayout>

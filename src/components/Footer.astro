@@ -1,0 +1,18 @@
+---
+import { SITE } from '@/lib/site';
+---
+
+<footer class="site-footer" data-pagefind-ignore>
+  <div class="container footer-inner">
+    <p class="footer-note">
+      <strong>记录工程，也记录成长。</strong>
+      {SITE.name} 是一个开源的个人数字书房。代码使用 MIT，原创内容使用 CC BY-NC-SA 4.0。
+    </p>
+    <nav class="footer-links" aria-label="页脚链接">
+      <a href={SITE.repository} rel="noreferrer">GitHub</a>
+      <a href="/rss.xml">RSS</a>
+      <a href="/privacy/">隐私说明</a>
+      <a href="/about/">关于五味</a>
+    </nav>
+  </div>
+</footer>

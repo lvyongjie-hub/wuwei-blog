@@ -1,0 +1,30 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { PROJECT_STATUS } from '@/lib/site';
+import StatusStamp from './StatusStamp.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const data = project.data;
+---
+
+<article class="paper-card project-card">
+  <div class="card-meta">
+    <span>{data.year} / {data.role}</span>
+    <StatusStamp label={PROJECT_STATUS[data.status]} />
+  </div>
+  <h2 class="card-title"><a href={`/projects/${project.id}/`}>{data.title}</a></h2>
+  {data.titleEn && <p class="card-meta">{data.titleEn}</p>}
+  <p class="card-description">{data.description}</p>
+  <div class="card-footer">
+    <ul class="tag-list" aria-label="技术栈">
+      {data.stack.slice(0, 4).map((item) => <li class="tag">{item}</li>)}
+    </ul>
+    <a class="section-link" href={`/projects/${project.id}/`} aria-label={`查看${data.title}`}>
+      查看档案 <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+</article>

@@ -1,0 +1,63 @@
+---
+import type { GetStaticPaths } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import { SITE } from '@/lib/site';
+
+interface Props {
+  article: CollectionEntry<'study'>;
+  book: CollectionEntry<'books'>;
+  siblings: CollectionEntry<'study'>[];
+}
+
+export const getStaticPaths = (async () => {
+  const articles = await getCollection('study', ({ data }) => !data.draft);
+  const books = await getCollection('books');
+  return articles.flatMap((article) => {
+    const book = books.find((item) => item.id === article.data.book);
+    if (!book) return [];
+    return [
+      {
+        params: { book: book.id, article: article.id },
+        props: {
+          article,
+          book,
+          siblings: articles
+            .filter((item) => item.data.book === book.id)
+            .sort((a, b) => a.data.order - b.data.order),
+        },
+      },
+    ];
+  });
+}) satisfies GetStaticPaths;
+
+const { article, book, siblings } = Astro.props;
+const { Content, headings } = await render(article);
+const sourcePath =
+  article.filePath?.replaceAll('\\', '/').split('/src/content/')[1] ?? `study/${article.id}.md`;
+---
+
+<ArticleLayout
+  title={article.data.title}
+  titleEn={article.data.titleEn}
+  description={article.data.description}
+  eyebrow={`${book.data.title} / ${article.data.chapter}`}
+  publishedAt={article.data.publishedAt}
+  updatedAt={article.data.updatedAt}
+  tags={article.data.tags}
+  headings={headings}
+  sidebarTitle={book.data.title}
+  sidebarItems={siblings.map((item) => ({
+    href: `/study/${book.id}/${item.id}/`,
+    label: `${item.data.chapter} · ${item.data.title}`,
+    current: item.id === article.id,
+  }))}
+  sourceHref={`${SITE.repository}/blob/main/src/content/${sourcePath}`}
+  sourceLabel="查看本文源文件 / 建议修改"
+  showComments
+  ogImage={`/og/study-${article.id.replaceAll('/', '-')}.svg`}
+  contentType="study"
+>
+  <Content />
+</ArticleLayout>

@@ -1,0 +1,140 @@
+---
+import { NAV_ITEMS } from '@/lib/site';
+import Bookplate from './Bookplate.astro';
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header" data-menu-open="false" data-pagefind-ignore>
+  <div class="container header-inner">
+    <Bookplate />
+
+    <nav class="site-nav" aria-label="主导航">
+      {
+        NAV_ITEMS.map((item) => (
+          <a
+            class="nav-link"
+            href={item.href}
+            aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}
+          >
+            <span>{item.label}</span>
+            <small>{item.labelEn}</small>
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="header-actions">
+      <a class="icon-button" href="/search/" aria-label="搜索">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="6.5"></circle>
+          <path d="m16 16 4.2 4.2"></path>
+        </svg>
+      </a>
+      <button class="icon-button" type="button" data-theme-toggle aria-label="切换主题">
+        <svg
+          data-theme-icon="sun"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="3.5"></circle>
+          <path
+            d="M12 2v2.2M12 19.8V22M4.9 4.9l1.55 1.55M17.55 17.55l1.55 1.55M2 12h2.2M19.8 12H22M4.9 19.1l1.55-1.55M17.55 6.45l1.55-1.55"
+          ></path>
+        </svg>
+        <svg
+          data-theme-icon="moon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true"
+        >
+          <path d="M20.4 15.4A8.5 8.5 0 0 1 8.6 3.6 8.5 8.5 0 1 0 20.4 15.4Z"></path>
+        </svg>
+      </button>
+      <button
+        class="menu-toggle"
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-label="打开菜单"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true"
+        >
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const root = document.documentElement;
+    const header = document.querySelector('.site-header');
+    const themeButton = document.querySelector('[data-theme-toggle]');
+    const menuButton = document.querySelector('[data-menu-toggle]');
+
+    const setTheme = (theme) => {
+      root.dataset.theme = theme;
+      try {
+        localStorage.setItem('wuwei-theme', theme);
+      } catch {
+        // The selected theme still works for this visit when storage is unavailable.
+      }
+      themeButton?.setAttribute(
+        'aria-label',
+        theme === 'dark' ? '切换到浅色模式' : '切换到深色模式',
+      );
+    };
+
+    const current =
+      root.dataset.theme ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    setTheme(current);
+
+    themeButton?.addEventListener('click', () =>
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'),
+    );
+    menuButton?.addEventListener('click', () => {
+      const open = header?.dataset.menuOpen === 'true';
+      header?.setAttribute('data-menu-open', String(!open));
+      menuButton.setAttribute('aria-expanded', String(!open));
+      menuButton.setAttribute('aria-label', open ? '打开菜单' : '关闭菜单');
+    });
+
+    document.querySelectorAll('.site-nav a').forEach((link) => {
+      link.addEventListener('click', () => {
+        header?.setAttribute('data-menu-open', 'false');
+        menuButton?.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const target = event.target;
+      const isTyping =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement;
+      if (event.key === '/' && !isTyping && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        event.preventDefault();
+        window.location.assign('/search/');
+      }
+    });
+  })();
+</script>

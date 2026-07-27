@@ -1,0 +1,156 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="搜索" description="搜索五味书房的项目档案、知识库、实验记录和随笔。" noindex>
+  <div class="container">
+    <header class="page-intro search-shell">
+      <span class="eyebrow">SEARCH THE STUDY</span>
+      <h1>搜索书房</h1>
+      <p>搜索中文标题、英文摘要、技术标签与正文。按 <kbd>/</kbd> 可以从任何页面来到这里。</p>
+    </header>
+
+    <section class="search-shell" aria-label="全站搜索">
+      <form class="search-form" data-search-form role="search">
+        <label class="visually-hidden" for="site-search">搜索关键词</label>
+        <input
+          id="site-search"
+          class="search-input"
+          type="search"
+          name="q"
+          placeholder="例如：FreeRTOS、Bootloader、TinyML"
+          autocomplete="off"
+        />
+        <button class="button button-primary" type="submit">搜索</button>
+      </form>
+      <div class="filter-row" role="group" aria-label="内容类型">
+        <button class="filter-chip" type="button" data-search-filter="all" aria-pressed="true"
+          >全部</button
+        >
+        <button class="filter-chip" type="button" data-search-filter="project" aria-pressed="false"
+          >项目档案</button
+        >
+        <button class="filter-chip" type="button" data-search-filter="study" aria-pressed="false"
+          >书房文章</button
+        >
+        <button
+          class="filter-chip"
+          type="button"
+          data-search-filter="experiment"
+          aria-pressed="false">实验记录</button
+        >
+        <button class="filter-chip" type="button" data-search-filter="note" aria-pressed="false"
+          >随笔</button
+        >
+      </div>
+      <p class="search-help" data-search-status aria-live="polite">输入关键词开始搜索。</p>
+      <div class="search-results" data-search-results></div>
+      <div class="search-fallback" data-search-fallback>
+        本地开发模式还没有 Pagefind 索引。运行 <code>npm run build</code> 后再用 <code
+          >npm run preview</code
+        > 即可测试完整搜索。
+      </div>
+    </section>
+  </div>
+
+  <script is:inline type="module">
+    (() => {
+      const form = document.querySelector('[data-search-form]');
+      const input = document.querySelector('#site-search');
+      const status = document.querySelector('[data-search-status]');
+      const results = document.querySelector('[data-search-results]');
+      const fallback = document.querySelector('[data-search-fallback]');
+      const filterButtons = [...document.querySelectorAll('[data-search-filter]')];
+      if (!(form instanceof HTMLFormElement) || !(input instanceof HTMLInputElement) || !results)
+        return;
+
+      let activeFilter = 'all';
+      let pagefindPromise;
+
+      const loadPagefind = () => {
+        pagefindPromise ??= import('/pagefind/pagefind.js').then(async (pagefind) => {
+          await pagefind.init();
+          return pagefind;
+        });
+        return pagefindPromise;
+      };
+
+      const createResult = (data) => {
+        const article = document.createElement('article');
+        article.className = 'search-result';
+        const meta = document.createElement('span');
+        meta.className = 'card-meta';
+        meta.textContent = data.meta?.contentType || '页面';
+        const title = document.createElement('h2');
+        title.className = 'card-title';
+        const link = document.createElement('a');
+        link.href = data.url;
+        link.textContent = data.meta?.title || data.url;
+        title.append(link);
+        const excerpt = document.createElement('p');
+        excerpt.className = 'card-description';
+        excerpt.innerHTML = data.excerpt || '';
+        article.append(meta, title, excerpt);
+        return article;
+      };
+
+      const search = async () => {
+        const term = input.value.trim();
+        const params = new URLSearchParams(window.location.search);
+        if (term) params.set('q', term);
+        else params.delete('q');
+        history.replaceState(
+          null,
+          '',
+          `${window.location.pathname}${params.size ? `?${params}` : ''}`,
+        );
+        results.replaceChildren();
+        if (!term) {
+          if (status) status.textContent = '输入关键词开始搜索。';
+          return;
+        }
+
+        if (status) status.textContent = '正在翻找书页…';
+        try {
+          const pagefind = await loadPagefind();
+          const options = activeFilter === 'all' ? {} : { filters: { type: activeFilter } };
+          const response = await pagefind.search(term, options);
+          const entries = await Promise.all(
+            response.results.slice(0, 30).map((result) => result.data()),
+          );
+          entries.forEach((entry) => results.append(createResult(entry)));
+          if (status)
+            status.textContent =
+              entries.length > 0
+                ? `找到 ${response.results.length} 条结果。`
+                : '没有找到匹配内容。';
+          fallback?.removeAttribute('data-visible');
+        } catch {
+          if (status) status.textContent = '搜索索引暂时不可用。';
+          fallback?.setAttribute('data-visible', 'true');
+        }
+      };
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        search();
+      });
+      filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          activeFilter = button.getAttribute('data-search-filter') || 'all';
+          filterButtons.forEach((item) =>
+            item.setAttribute('aria-pressed', String(item === button)),
+          );
+          if (input.value.trim()) search();
+        });
+      });
+
+      const initial = new URLSearchParams(window.location.search).get('q');
+      if (initial) {
+        input.value = initial;
+        search();
+      }
+      input.focus();
+    })();
+  </script>
+</BaseLayout>

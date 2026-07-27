@@ -1,0 +1,18 @@
+---
+interface Props {
+  name: string;
+  description: string;
+  href: string;
+  license?: string;
+}
+
+const { name, description, href, license } = Astro.props;
+---
+
+<a class="repository-card" href={href} rel="noreferrer">
+  <span class="sidebar-label">EXTERNAL REPOSITORY</span>
+  <strong>{name}</strong>
+  <span>{description}</span>
+  {license && <small>{license}</small>}
+  <span class="section-link">打开仓库 ↗</span>
+</a>

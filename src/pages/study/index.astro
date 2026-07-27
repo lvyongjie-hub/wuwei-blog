@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import BookCard from '@/components/BookCard.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const books = (await getCollection('books')).sort((a, b) => a.data.order - b.data.order);
+const articles = await getCollection('study', ({ data }) => !data.draft);
+---
+
+<BaseLayout title="书房" description="按知识库、章节和文章组织的嵌入式系统与端侧 AI 知识书房。">
+  <PageIntro
+    eyebrow="THE STUDY"
+    title="数字书房"
+    description="这里像语雀的知识库一样组织内容：一本知识库，一棵章节树，再落到具体文章。零散思考先留在实验记录或随笔里。"
+  />
+  <section class="container section" aria-label="知识库书架">
+    <div class="book-grid">
+      {
+        books.map((book) => (
+          <BookCard
+            book={book}
+            articleCount={articles.filter((article) => article.data.book === book.id).length}
+          />
+        ))
+      }
+    </div>
+    <p class="section-note">
+      首版先搭好书架和目录结构，不用虚构文章填充。知识库会随着真实项目与实验慢慢成形。
+    </p>
+  </section>
+</BaseLayout>

@@ -1,0 +1,172 @@
+---
+import { getCollection } from 'astro:content';
+import BookCard from '@/components/BookCard.astro';
+import EmptyState from '@/components/EmptyState.astro';
+import NowPanel from '@/components/NowPanel.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { SITE } from '@/lib/site';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft))
+  .sort(
+    (a, b) =>
+      Number(b.data.featured) - Number(a.data.featured) ||
+      b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
+  )
+  .slice(0, 2);
+const books = (await getCollection('books')).sort((a, b) => a.data.order - b.data.order);
+const study = await getCollection('study', ({ data }) => !data.draft);
+const notes = (await getCollection('notes', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 3);
+const articleCount = new Map(
+  books.map((book) => [book.id, study.filter((article) => article.data.book === book.id).length]),
+);
+---
+
+<BaseLayout>
+  <div class="container">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow">EMBEDDED SYSTEMS / EDGE AI</span>
+        <h1 id="hero-title" class="display">
+          <span>把复杂系统，</span>
+          <span>慢慢做成</span>
+          <em>可靠的东西。</em>
+        </h1>
+        <p class="hero-intro">{SITE.manifesto}</p>
+        <div class="hero-ctas">
+          <a class="button button-primary" href="/projects/"
+            >查看项目档案 <span aria-hidden="true">↗</span></a
+          >
+          <a class="button button-secondary" href="/study/"
+            >进入数字书房 <span aria-hidden="true">→</span></a
+          >
+        </div>
+      </div>
+
+      <aside class="desk-card" aria-label="五味书票">
+        <div class="desk-card-top">
+          <span class="desk-label">ENGINEER'S DIGITAL DESK</span>
+          <span class="desk-date">EST. 2026</span>
+        </div>
+        <div class="hero-bookplate" aria-hidden="true">
+          <span>五味</span>
+          <svg viewBox="0 0 190 72" fill="none">
+            <path d="M3 46h22l9-23 13 39 13-31 10 15h24l8-12 11 12h73"></path>
+            <circle cx="3" cy="46" r="2.5"></circle><circle cx="186" cy="46" r="2.5"></circle>
+          </svg>
+        </div>
+        <p class="desk-quote">工程档案、实验笔记，也有书页边缘留下的思考。</p>
+        <div class="desk-card-bottom">
+          <span class="desk-meta">MCU · RTOS · RELIABILITY · TINYML</span>
+          <span class="desk-signal" aria-hidden="true"
+            ><span></span><span></span><span></span><span></span><span></span><span></span><span
+            ></span></span
+          >
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" aria-labelledby="featured-projects">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">SELECTED WORK</span>
+          <h2 id="featured-projects" class="section-title">精选项目</h2>
+          <p class="section-description">从约束、决策到验证证据，尽量把工程过程说完整。</p>
+        </div>
+        <a class="section-link" href="/projects/">全部项目 <span aria-hidden="true">→</span></a>
+      </div>
+      {
+        projects.length > 0 ? (
+          <div class="project-grid">
+            {projects.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            title="项目档案正在归整"
+            message="确认公开边界后，真实项目会从这里陆续展开。"
+          />
+        )
+      }
+    </section>
+
+    <section class="section" aria-labelledby="featured-writing">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">DEEP DIVES</span>
+          <h2 id="featured-writing" class="section-title">代表文章</h2>
+          <p class="section-description">
+            面向 MCU、RTOS、驱动协议、可靠性与端侧 AI 的工程深度记录。
+          </p>
+        </div>
+        <a class="section-link" href="/study/">前往书房 <span aria-hidden="true">→</span></a>
+      </div>
+      <EmptyState message="首篇深度文章还在打磨。这里不会用虚构内容填满版面。" />
+    </section>
+
+    <section class="section" aria-labelledby="current-work">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">CURRENT DIRECTIONS</span>
+          <h2 id="current-work" class="section-title">当前研究方向</h2>
+          <p class="section-description">
+            把零散实验整理成可复现记录，再逐步升级为项目档案或知识库章节。
+          </p>
+        </div>
+        <a class="section-link" href="/experiments/">实验记录 <span aria-hidden="true">→</span></a>
+      </div>
+      <NowPanel />
+      <div class="book-grid home-book-grid">
+        {
+          books.map((book) => (
+            <BookCard book={book} articleCount={articleCount.get(book.id) ?? 0} />
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="recent-notes">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">RECENT NOTES</span>
+          <h2 id="recent-notes" class="section-title">最近随笔</h2>
+          <p class="section-description">在专业主线之外，保留一些阅读、生活和缓慢形成的想法。</p>
+        </div>
+        <a class="section-link" href="/notes/">全部随笔 <span aria-hidden="true">→</span></a>
+      </div>
+      {
+        notes.length > 0 ? (
+          <div class="prose-list">
+            {notes.map((note) => (
+              <div class="prose-list-item">
+                <a href={`/notes/${note.id}/`}>{note.data.title}</a>
+                <time datetime={note.data.publishedAt.toISOString()}>
+                  {note.data.publishedAt.toLocaleDateString('zh-CN')}
+                </time>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState message="随笔会等到真的有话想说时再写。" />
+        )
+      }
+    </section>
+
+    <section class="section home-about" aria-labelledby="about-wuwei">
+      <div>
+        <span class="eyebrow">ABOUT WUWEI</span>
+        <h2 id="about-wuwei" class="section-title">认真做工程，也诚实记录边界。</h2>
+      </div>
+      <p>
+        五味关注嵌入式系统、固件可靠性与端侧
+        AI。这里公开真实项目的决策和验证过程，也明确写下尚未完成的硬件测试。
+      </p>
+      <a class="button button-secondary" href="/about/"
+        >认识五味 <span aria-hidden="true">→</span></a
+      >
+    </section>
+  </div>
+</BaseLayout>

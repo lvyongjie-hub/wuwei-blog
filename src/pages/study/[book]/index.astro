@@ -1,0 +1,95 @@
+---
+import type { GetStaticPaths } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import EmptyState from '@/components/EmptyState.astro';
+import StatusStamp from '@/components/StatusStamp.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { BOOK_STATUS } from '@/lib/site';
+
+interface Props {
+  book: CollectionEntry<'books'>;
+  articles: CollectionEntry<'study'>[];
+}
+
+export const getStaticPaths = (async () => {
+  const books = await getCollection('books');
+  const articles = await getCollection('study', ({ data }) => !data.draft);
+  return books.map((book) => ({
+    params: { book: book.id },
+    props: {
+      book,
+      articles: articles
+        .filter((article) => article.data.book === book.id)
+        .sort((a, b) => a.data.order - b.data.order),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { book, articles } = Astro.props;
+const chapters = [...new Set(articles.map((article) => article.data.chapter))];
+---
+
+<BaseLayout title={book.data.title} description={book.data.description}>
+  <div class="content-layout book-directory-layout">
+    <aside class="content-sidebar" aria-label="知识库信息">
+      <span class="sidebar-label">KNOWLEDGE BOOK</span>
+      <a class="section-link" href="/study/">← 返回书架</a>
+      <div class="book-directory-meta" style={`--book-accent: ${book.data.accent}`}>
+        <StatusStamp label={BOOK_STATUS[book.data.status]} />
+        <span>{articles.length} 篇文章</span>
+      </div>
+    </aside>
+
+    <article class="article">
+      <header class="article-header">
+        <span class="eyebrow">DIGITAL BOOK / {book.id}</span>
+        <h1>{book.data.title}</h1>
+        {book.data.titleEn && <p class="article-meta">{book.data.titleEn}</p>}
+        <p class="article-lede">{book.data.description}</p>
+      </header>
+      {
+        articles.length > 0 ? (
+          <div class="chapter-list">
+            {chapters.map((chapter) => (
+              <section>
+                <h2>{chapter}</h2>
+                <ol>
+                  {articles
+                    .filter((article) => article.data.chapter === chapter)
+                    .map((article) => (
+                      <li>
+                        <a href={`/study/${book.id}/${article.id}/`}>{article.data.title}</a>
+                      </li>
+                    ))}
+                </ol>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            title="目录正在生长"
+            message="这本知识库已经确定方向，但首版暂不加入正式文章。成熟的实验会在这里逐步编成章节。"
+          />
+        )
+      }
+    </article>
+
+    <aside class="content-toc" aria-label="知识库章节索引">
+      <span class="sidebar-label">BOOK INDEX</span>
+      {
+        chapters.length > 0 ? (
+          <ol class="toc-list">
+            {chapters.map((chapter) => (
+              <li>
+                <span>{chapter}</span>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p class="section-note">章节树将在首篇文章发布时展开。</p>
+        )
+      }
+    </aside>
+  </div>
+</BaseLayout>

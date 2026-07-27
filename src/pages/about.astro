@@ -1,0 +1,80 @@
+---
+import Bookplate from '@/components/Bookplate.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { SITE } from '@/lib/site';
+---
+
+<BaseLayout
+  title="关于五味"
+  description="关于五味：嵌入式系统、固件可靠性、边缘 AI，以及这间数字书房。"
+>
+  <div class="container">
+    <header class="page-intro about-page-intro">
+      <span class="eyebrow">ABOUT WUWEI</span>
+      <h1>认真做工程，<br />也把过程留下来。</h1>
+    </header>
+
+    <section class="about-grid">
+      <div>
+        <p class="about-lede">{SITE.manifesto}</p>
+        <div class="about-copy article-body">
+          <p>
+            我是五味，主要关注嵌入式系统与固件工程，也把边缘 AI
+            作为第二条专业支柱。比起追逐宽泛的技术热点，我更关心
+            MCU、RTOS、驱动协议、端侧模型和真实硬件约束怎样一起构成一个可靠系统。
+          </p>
+          <p>
+            这里的项目档案会尽量交代问题背景、个人职责、关键决策、验证方法与未完成项。工作项目只以脱敏案例出现，不公开客户信息、密钥、受限源码或敏感指标。
+          </p>
+          <h2>关注方向</h2>
+          <ul>
+            <li>ARM Cortex-M、ESP32、RISC-V 等 MCU 平台与固件架构。</li>
+            <li>FreeRTOS、Zephyr、RT-Thread 与实时系统边界。</li>
+            <li>I²C、SPI、UART、CAN 等驱动协议及故障定位。</li>
+            <li>系统可靠性、Bootloader、固件升级、数据完整性与验证证据。</li>
+            <li>TinyML、端侧模型、AI 辅助固件开发和智能硬件。</li>
+          </ul>
+          <h2>经历</h2>
+          <div class="timeline">
+            <div class="timeline-item">
+              <time>现在</time>
+              <div>
+                <strong>持续构建真实项目与技术档案</strong><span
+                  >匿名化职业经历将在资料整理完成后补充，不在首版虚构时间线。</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="contact-card">
+        <div class="about-bookplate"><Bookplate /></div>
+        <h2>保持联系</h2>
+        <p>如果你想讨论嵌入式项目、端侧 AI、技术合作，或索取完整简历，可以从下面找到我。</p>
+        <div class="contact-links">
+          <a class="contact-link" href={SITE.github} rel="noreferrer"
+            ><span>GitHub</span><span aria-hidden="true">↗</span></a
+          >
+          {
+            SITE.email ? (
+              <a class="contact-link" href={`mailto:${SITE.email}`}>
+                <>
+                  <span>{SITE.email}</span>
+                  <span aria-hidden="true">↗</span>
+                </>
+              </a>
+            ) : (
+              <span class="contact-link contact-link-pending">
+                <>
+                  <span>专用邮箱上线前补充</span>
+                  <span>—</span>
+                </>
+              </span>
+            )
+          }
+        </div>
+      </aside>
+    </section>
+  </div>
+</BaseLayout>

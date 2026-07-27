@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import EmptyState from '@/components/EmptyState.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import StatusStamp from '@/components/StatusStamp.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { EXPERIMENT_STATUS, formatDate } from '@/lib/site';
+
+const experiments = (await getCollection('experiments', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
+);
+---
+
+<BaseLayout title="实验记录" description="从灵感到可复现实验，再成长为项目档案或知识库章节。">
+  <PageIntro
+    eyebrow="LAB NOTEBOOK"
+    title="实验记录"
+    description="这里容纳尚未成体系、但值得复现和继续追问的嵌入式 × AI 实验。结论成熟后，再升级为项目或编入书房。"
+  />
+  <section class="container" aria-label="实验记录列表">
+    {
+      experiments.length > 0 ? (
+        <div class="project-grid">
+          {experiments.map((experiment) => (
+            <article class="paper-card">
+              <div class="card-meta">
+                <time datetime={experiment.data.publishedAt.toISOString()}>
+                  {formatDate(experiment.data.publishedAt)}
+                </time>
+                <StatusStamp label={EXPERIMENT_STATUS[experiment.data.status]} />
+              </div>
+              <h2 class="card-title">
+                <a href={`/experiments/${experiment.id}/`}>{experiment.data.title}</a>
+              </h2>
+              <p class="card-description">{experiment.data.description}</p>
+              <div class="card-footer">
+                <ul class="tag-list">
+                  {experiment.data.tags.map((tag) => (
+                    <li class="tag">{tag}</li>
+                  ))}
+                </ul>
+                <a class="section-link" href={`/experiments/${experiment.id}/`}>
+                  打开记录 →
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          title="实验台还空着"
+          message="首版不补写虚构实验。第一条可复现记录完成后，会从这里开始生长。"
+          eyebrow="LAB PREPARING"
+        />
+      )
+    }
+  </section>
+</BaseLayout>

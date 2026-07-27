@@ -1,0 +1,36 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="隐私说明" description="五味书房的访问分析、评论、外部链接和数据收集说明。">
+  <article class="narrow-container article">
+    <header class="article-header">
+      <span class="eyebrow">PRIVACY</span>
+      <h1>隐私说明</h1>
+      <p class="article-lede">这间书房尽量少收集数据，也不建立访客画像。</p>
+    </header>
+    <div class="article-body">
+      <h2>访问分析</h2>
+      <p>
+        网站计划使用 Cloudflare Web Analytics
+        查看访问量、热门页面、来源和基础性能数据。它不用于广告追踪，也不建立跨站用户画像。分析功能只有在部署环境配置令牌后才会启用。
+      </p>
+      <h2>评论</h2>
+      <p>
+        项目档案和部分工程内容可通过 Giscus 连接 GitHub Discussions。只有在评论时，你才会进入 GitHub
+        的登录与数据处理流程；相关行为受 GitHub 的隐私政策约束。
+      </p>
+      <h2>联系与表单</h2>
+      <p>
+        首版不提供联系表单，不在本站数据库中保存访客提交的信息。点击邮箱链接后，通信由你选择的邮件服务完成。
+      </p>
+      <h2>外部链接与日志</h2>
+      <p>
+        外部链接会带你离开本站，目标网站可能使用自己的 Cookie
+        或分析工具。托管与网络服务也可能保留必要的安全和访问日志。
+      </p>
+      <h2>更新</h2>
+      <p>如果未来增加新的数据处理方式，本页会先更新，再启用相应功能。</p>
+    </div>
+  </article>
+</BaseLayout>

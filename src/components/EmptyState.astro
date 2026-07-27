@@ -1,0 +1,21 @@
+---
+interface Props {
+  title?: string;
+  message?: string;
+  eyebrow?: string;
+}
+
+const {
+  title = '正在整理',
+  message = '这部分内容还在书桌上，等一次合适的整理。',
+  eyebrow = 'IN THE MAKING',
+} = Astro.props;
+---
+
+<div class="empty-state">
+  <div>
+    <span class="eyebrow">{eyebrow}</span>
+    <strong>{title}</strong>
+    <p>{message}</p>
+  </div>
+</div>

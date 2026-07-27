@@ -1,0 +1,166 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Giscus from '@/components/Giscus.astro';
+import { CONTENT_TYPE, formatDate } from '@/lib/site';
+
+type Heading = { depth: number; slug: string; text: string };
+
+interface SidebarItem {
+  href: string;
+  label: string;
+  current?: boolean;
+}
+
+interface Props {
+  title: string;
+  titleEn?: string;
+  description: string;
+  eyebrow: string;
+  publishedAt?: Date;
+  updatedAt?: Date;
+  tags?: string[];
+  headings?: Heading[];
+  sidebarTitle?: string;
+  sidebarItems?: SidebarItem[];
+  sourceHref?: string;
+  sourceLabel?: string;
+  showComments?: boolean;
+  showSourceNote?: boolean;
+  ogImage?: string;
+  contentType: keyof typeof CONTENT_TYPE;
+}
+
+const {
+  title,
+  titleEn,
+  description,
+  eyebrow,
+  publishedAt,
+  updatedAt,
+  tags = [],
+  headings = [],
+  sidebarTitle,
+  sidebarItems = [],
+  sourceHref,
+  sourceLabel = '在 GitHub 查看 / 建议修改',
+  showComments = false,
+  showSourceNote = true,
+  ogImage,
+  contentType,
+} = Astro.props;
+
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+
+<BaseLayout title={title} description={description} ogImage={ogImage}>
+  <details class="mobile-outline">
+    <summary>目录与文章导航</summary>
+    {sidebarTitle && <span class="sidebar-label">{sidebarTitle}</span>}
+    {
+      sidebarItems.length > 0 && (
+        <ul class="tree-list">
+          {sidebarItems.map((item) => (
+            <li>
+              <a href={item.href} aria-current={item.current ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    {
+      toc.length > 0 && (
+        <ol class="toc-list mobile-toc-list">
+          {toc.map((heading) => (
+            <li style={heading.depth === 3 ? 'padding-left: 0.65rem' : undefined}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+  </details>
+  <div class="content-layout">
+    <aside class="content-sidebar" aria-label={sidebarTitle ?? '页面导航'}>
+      {sidebarTitle && <span class="sidebar-label">{sidebarTitle}</span>}
+      {
+        sidebarItems.length > 0 ? (
+          <ul class="tree-list">
+            {sidebarItems.map((item) => (
+              <li>
+                <a href={item.href} aria-current={item.current ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="section-note">这一页会随着内容整理逐步长出目录。</p>
+        )
+      }
+    </aside>
+
+    <article class="article" data-pagefind-body data-pagefind-filter={`type:${contentType}`}>
+      <header class="article-header">
+        <span class="eyebrow">{eyebrow}</span>
+        <h1 data-pagefind-meta="title">{title}</h1>
+        {titleEn && <p class="article-meta">{titleEn}</p>}
+        <p class="article-lede">{description}</p>
+        <span class="visually-hidden" data-pagefind-meta="contentType"
+          >{CONTENT_TYPE[contentType]}</span
+        >
+        {
+          (publishedAt || updatedAt || tags.length > 0) && (
+            <div class="article-meta" style="margin-top: 1rem">
+              {publishedAt && <span>发布 {formatDate(publishedAt)}</span>}
+              {updatedAt && <span>更新 {formatDate(updatedAt)}</span>}
+              {tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )
+        }
+      </header>
+
+      <div class="article-body">
+        <slot />
+      </div>
+
+      {
+        (showSourceNote || showComments) && (
+          <footer class="article-footer">
+            {showSourceNote &&
+              (sourceHref ? (
+                <a class="button button-secondary" href={sourceHref} rel="noreferrer">
+                  {sourceLabel} ↗
+                </a>
+              ) : (
+                <div class="source-note">
+                  源码入口暂未开放；这里保留可复盘的工程事实和验证边界。
+                </div>
+              ))}
+            {showComments && <Giscus />}
+          </footer>
+        )
+      }
+    </article>
+
+    <aside class="content-toc" aria-label="文章目录">
+      {
+        toc.length > 0 && (
+          <>
+            <span class="sidebar-label">ON THIS PAGE</span>
+            <ol class="toc-list">
+              {toc.map((heading) => (
+                <li style={heading.depth === 3 ? 'padding-left: 0.65rem' : undefined}>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </>
+        )
+      }
+    </aside>
+  </div>
+</BaseLayout>

@@ -1,0 +1,23 @@
+---
+interface Props {
+  verification: string[];
+  pendingVerification: string[];
+}
+
+const { verification, pendingVerification } = Astro.props;
+---
+
+<section class="evidence-grid" aria-label="验证边界">
+  <div class="evidence-card evidence-card-good">
+    <span class="sidebar-label">已形成的证据</span>
+    <ul>
+      {verification.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+  <div class="evidence-card evidence-card-pending">
+    <span class="sidebar-label">仍待验证</span>
+    <ul>
+      {pendingVerification.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+</section>

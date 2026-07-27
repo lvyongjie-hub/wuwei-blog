@@ -1,0 +1,140 @@
+---
+import '@/styles/global.css';
+import Footer from '@/components/Footer.astro';
+import Header from '@/components/Header.astro';
+import { SITE } from '@/lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = SITE.name,
+  description = SITE.description,
+  ogImage = '/og/default.svg',
+  noindex = false,
+} = Astro.props;
+const fullTitle = title === SITE.name ? title : `${title} · ${SITE.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://wuwei-blog.pages.dev');
+const imageUrl = new URL(ogImage, canonical).toString();
+const analyticsToken = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  alternateName: SITE.nameEn,
+  description,
+  url: canonical,
+  author: { '@type': 'Person', name: SITE.author },
+};
+---
+
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#f3efe6" />
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} RSS`} href="/rss.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <title>{fullTitle}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem('wuwei-theme');
+          const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light';
+          document.documentElement.dataset.theme = stored || preferred;
+        } catch {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    {
+      analyticsToken && (
+        <script
+          is:inline
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: analyticsToken })}
+        />
+      )
+    }
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="reading-progress" data-reading-progress aria-hidden="true"><span></span></div>
+    <div class="site-shell">
+      <Header />
+      <main id="main-content" class="page-main">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <script is:inline>
+      (() => {
+        const article = document.querySelector('[data-pagefind-body]');
+        const progress = document.querySelector('[data-reading-progress]');
+        if (!article || !progress) return;
+
+        progress.setAttribute('data-visible', 'true');
+        const update = () => {
+          const start = article.getBoundingClientRect().top + window.scrollY;
+          const distance = Math.max(article.scrollHeight - window.innerHeight, 1);
+          const value = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
+          progress.style.setProperty('--reading-progress', String(value));
+        };
+
+        update();
+        window.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+      })();
+    </script>
+    <script is:inline>
+      (() => {
+        document.querySelectorAll('.article-body pre:not(.mermaid)').forEach((block) => {
+          if (block.querySelector('.code-copy')) return;
+          const code = block.querySelector('code');
+          if (!code) return;
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'code-copy';
+          button.textContent = '复制';
+          button.setAttribute('aria-label', '复制代码');
+          button.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(code.textContent || '');
+              button.textContent = '已复制';
+              setTimeout(() => {
+                button.textContent = '复制';
+              }, 1600);
+            } catch {
+              button.textContent = '复制失败';
+            }
+          });
+          block.append(button);
+        });
+      })();
+    </script>
+  </body>
+</html>

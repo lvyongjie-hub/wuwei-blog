@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import EmptyState from '@/components/EmptyState.astro';
+import NoteStreamItem from '@/components/NoteStreamItem.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
+);
+---
+
+<BaseLayout title="随笔" description="五味关于阅读、生活、工程之外与工程之间的随笔。">
+  <PageIntro
+    eyebrow="NOTES & MARGINALIA"
+    title="随笔"
+    description="不把每个想法都硬塞进技术框架。短随笔直接留在时间流里，长随笔则保留一扇单独的门。"
+  />
+  <section class="narrow-container note-stream" aria-label="随笔时间流">
+    {
+      notes.length > 0 ? (
+        notes.map((note) => <NoteStreamItem note={note} />)
+      ) : (
+        <EmptyState
+          title="还没有随笔"
+          message="首版先把书桌搭好。等真的有话想说时，再从这里开始。"
+        />
+      )
+    }
+  </section>
+</BaseLayout>

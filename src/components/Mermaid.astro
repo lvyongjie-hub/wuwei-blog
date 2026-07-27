@@ -1,0 +1,30 @@
+---
+interface Props {
+  chart: string;
+  label?: string;
+}
+
+const { chart, label = '工程图' } = Astro.props;
+---
+
+<figure class="mermaid-figure">
+  <pre class="mermaid" data-mermaid-pending aria-label={label}>{chart}</pre>
+  <figcaption>{label}</figcaption>
+</figure>
+
+<script>
+  import mermaid from 'mermaid';
+
+  const nodes = [...document.querySelectorAll<HTMLElement>('.mermaid[data-mermaid-pending]')];
+  if (nodes.length > 0) {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'strict',
+      theme: dark ? 'dark' : 'neutral',
+      fontFamily: 'Noto Sans SC, sans-serif',
+    });
+    await mermaid.run({ nodes });
+    nodes.forEach((node) => node.removeAttribute('data-mermaid-pending'));
+  }
+</script>

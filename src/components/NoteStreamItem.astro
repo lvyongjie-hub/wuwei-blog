@@ -1,0 +1,34 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import { formatDate } from '@/lib/site';
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+---
+
+<article class="note-stream-item">
+  <header>
+    <div class="card-meta">
+      <time datetime={note.data.publishedAt.toISOString()}>{formatDate(note.data.publishedAt)}</time
+      >
+      <span>{note.data.kind === 'short' ? '短随笔' : '长随笔'}</span>
+    </div>
+    <h2><a href={`/notes/${note.id}/`}>{note.data.title}</a></h2>
+    {note.data.titleEn && <p class="article-meta">{note.data.titleEn}</p>}
+  </header>
+  {
+    note.data.kind === 'short' ? (
+      <div class="article-body note-inline-body">
+        <Content />
+      </div>
+    ) : (
+      <p class="card-description">{note.data.description}</p>
+    )
+  }
+  <a class="section-link" href={`/notes/${note.id}/`}>永久链接 <span aria-hidden="true">→</span></a>
+</article>

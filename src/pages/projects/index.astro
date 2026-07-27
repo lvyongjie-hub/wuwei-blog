@@ -1,0 +1,110 @@
+---
+import { getCollection } from 'astro:content';
+import PageIntro from '@/components/PageIntro.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { PROJECT_STATUS } from '@/lib/site';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) =>
+    Number(b.data.featured) - Number(a.data.featured) ||
+    (b.data.updatedAt ?? b.data.publishedAt).getTime() -
+      (a.data.updatedAt ?? a.data.publishedAt).getTime(),
+);
+const years = [...new Set(projects.map((project) => project.data.year))].sort((a, b) => b - a);
+const statuses = [...new Set(projects.map((project) => project.data.status))];
+const stacks = [...new Set(projects.flatMap((project) => project.data.stack))].sort();
+---
+
+<BaseLayout title="项目档案" description="五味的嵌入式系统、固件可靠性与端侧 AI 项目档案。">
+  <PageIntro
+    eyebrow="PROJECT ARCHIVE"
+    title="项目档案"
+    description="不只展示成品，也保留约束、工程决策、验证方法和仍然存在的风险。编译通过与板级验证会被清楚地区分。"
+  />
+
+  <section class="container" aria-label="项目筛选与列表">
+    <form class="filter-controls" data-project-filters>
+      <label
+        >年份
+        <select class="filter-select" name="year">
+          <option value="all">全部</option>
+          {years.map((year) => <option value={year}>{year}</option>)}
+        </select>
+      </label>
+      <label
+        >状态
+        <select class="filter-select" name="status">
+          <option value="all">全部</option>
+          {statuses.map((status) => <option value={status}>{PROJECT_STATUS[status]}</option>)}
+        </select>
+      </label>
+      <label
+        >技术
+        <select class="filter-select" name="stack">
+          <option value="all">全部</option>
+          {stacks.map((stack) => <option value={stack}>{stack}</option>)}
+        </select>
+      </label>
+      <button class="button button-secondary filter-reset" type="reset">清除筛选</button>
+      <button class="visually-hidden" type="submit">应用筛选</button>
+      <span class="filter-count" aria-live="polite" data-filter-count>{projects.length} 个项目</span
+      >
+    </form>
+
+    <div class="project-grid" data-project-list>
+      {
+        projects.map((project) => (
+          <div
+            class="filterable-project"
+            data-year={project.data.year}
+            data-status={project.data.status}
+            data-stack={project.data.stack.join('|')}
+          >
+            <ProjectCard project={project} />
+          </div>
+        ))
+      }
+    </div>
+    <div class="empty-state filter-empty" data-filter-empty hidden>
+      <div><strong>没有匹配的项目</strong><p>换一组筛选条件，或清除筛选查看全部档案。</p></div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const form = document.querySelector('[data-project-filters]');
+      const cards = [...document.querySelectorAll('.filterable-project')];
+      const count = document.querySelector('[data-filter-count]');
+      const empty = document.querySelector('[data-filter-empty]');
+      if (!(form instanceof HTMLFormElement)) return;
+
+      const apply = () => {
+        const data = new FormData(form);
+        const year = String(data.get('year') || 'all');
+        const status = String(data.get('status') || 'all');
+        const stack = String(data.get('stack') || 'all');
+        let visible = 0;
+
+        cards.forEach((card) => {
+          const matches =
+            (year === 'all' || card.getAttribute('data-year') === year) &&
+            (status === 'all' || card.getAttribute('data-status') === status) &&
+            (stack === 'all' || (card.getAttribute('data-stack') || '').split('|').includes(stack));
+          card.toggleAttribute('hidden', !matches);
+          if (matches) visible += 1;
+        });
+
+        if (count) count.textContent = `${visible} 个项目`;
+        empty?.toggleAttribute('hidden', visible !== 0);
+      };
+
+      form.addEventListener('change', apply);
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        apply();
+      });
+      form.addEventListener('reset', () => requestAnimationFrame(apply));
+    })();
+  </script>
+</BaseLayout>
