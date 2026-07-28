@@ -18,7 +18,10 @@ const {
   noindex = false,
 } = Astro.props;
 const fullTitle = title === SITE.name ? title : `${title} · ${SITE.name}`;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://wuwei-blog.pages.dev');
+const canonical = new URL(
+  Astro.url.pathname,
+  Astro.site ?? 'https://wuwei-blog.1035945832.workers.dev',
+);
 const imageUrl = new URL(ogImage, canonical).toString();
 const analyticsToken = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN;
 const structuredData = {

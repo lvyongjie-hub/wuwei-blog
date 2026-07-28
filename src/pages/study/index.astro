@@ -4,7 +4,9 @@ import BookCard from '@/components/BookCard.astro';
 import PageIntro from '@/components/PageIntro.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 
-const books = (await getCollection('books')).sort((a, b) => a.data.order - b.data.order);
+const books = (await getCollection('books', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 const articles = await getCollection('study', ({ data }) => !data.draft);
 ---
 

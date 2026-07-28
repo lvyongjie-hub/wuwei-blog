@@ -11,12 +11,14 @@ interface OgProps {
 const slugifyId = (id: string) => id.replaceAll('/', '-');
 
 export const getStaticPaths = (async () => {
-  const [projects, study, experiments, notes] = await Promise.all([
+  const [projects, books, study, experiments, notes] = await Promise.all([
     getCollection('projects', ({ data }) => !data.draft),
+    getCollection('books', ({ data }) => !data.draft),
     getCollection('study', ({ data }) => !data.draft),
     getCollection('experiments', ({ data }) => !data.draft),
     getCollection('notes', ({ data }) => !data.draft),
   ]);
+  const publishedBookIds = new Set(books.map((book) => book.id));
 
   return [
     {
@@ -27,10 +29,12 @@ export const getStaticPaths = (async () => {
       params: { slug: `project-${slugifyId(entry.id)}` },
       props: { title: entry.data.title, titleEn: entry.data.titleEn, label: 'PROJECT ARCHIVE' },
     })),
-    ...study.map((entry) => ({
-      params: { slug: `study-${slugifyId(entry.id)}` },
-      props: { title: entry.data.title, titleEn: entry.data.titleEn, label: 'THE STUDY' },
-    })),
+    ...study
+      .filter((entry) => publishedBookIds.has(entry.data.book))
+      .map((entry) => ({
+        params: { slug: `study-${slugifyId(entry.id)}` },
+        props: { title: entry.data.title, titleEn: entry.data.titleEn, label: 'THE STUDY' },
+      })),
     ...experiments.map((entry) => ({
       params: { slug: `experiment-${slugifyId(entry.id)}` },
       props: { title: entry.data.title, titleEn: entry.data.titleEn, label: 'LAB NOTEBOOK' },

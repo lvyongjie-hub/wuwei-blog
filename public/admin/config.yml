@@ -1,0 +1,378 @@
+backend:
+  name: github
+  repo: lvyongjie-hub/wuwei-blog
+  branch: main
+  auth_methods:
+    - token
+  commit_messages:
+    create: 'content: create {{collection}} {{slug}}'
+    update: 'content: update {{collection}} {{slug}}'
+    uploadMedia: 'content: upload media {{path}}'
+    deleteMedia: 'content: delete media {{path}}'
+
+app_title: 五味书房内容后台
+site_url: https://wuwei-blog.1035945832.workers.dev
+display_url: https://wuwei-blog.1035945832.workers.dev
+show_preview_links: true
+
+logo:
+  src: /favicon.svg
+  show_in_header: true
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: '-'
+  maxlength: 80
+
+editor:
+  preview: false
+
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  - name: study
+    label: 书房文章
+    label_singular: 书房文章
+    description: 进入知识库目录的工程深度文章。
+    folder: src/content/study
+    create: true
+    delete: false
+    duplicate: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    slug: '{{fields._slug}}'
+    summary: '{{title}} · {{book}} · {{publishedAt}}'
+    sortable_fields:
+      - featured
+      - publishedAt
+      - updatedAt
+      - title
+      - order
+    fields:
+      - { label: 中文标题, name: title, widget: string }
+      - { label: 英文标题, name: titleEn, widget: string, required: false }
+      - { label: 中文摘要, name: description, widget: text }
+      - label: 首次发布日期
+        name: publishedAt
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        default: '{{now}}'
+      - label: 最后更新时间
+        name: updatedAt
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        required: false
+      - { label: 首页精选, name: featured, widget: boolean, default: false }
+      - label: 所属知识库
+        name: book
+        widget: relation
+        collection: books
+        value_field: '{{slug}}'
+        display_fields:
+          - title
+          - titleEn
+        search_fields:
+          - title
+          - titleEn
+        filters:
+          - field: draft
+            values:
+              - false
+      - label: 章节标识
+        name: chapter
+        widget: string
+        hint: 例如 01-foundation 或 02-task-design。
+      - { label: 排序, name: order, widget: number, value_type: int, min: 0, default: 1 }
+      - label: 标签
+        name: tags
+        widget: list
+        required: false
+        allow_add: true
+        field: { label: 标签, name: tag, widget: string }
+      - label: 适用平台与版本
+        name: appliesTo
+        widget: list
+        required: false
+        allow_add: true
+        field: { label: 平台或版本, name: item, widget: string }
+      - label: 内容生命周期
+        name: lifecycle
+        widget: select
+        default: current
+        options:
+          - { label: 仍适用, value: current }
+          - { label: 部分过时, value: partly-outdated }
+          - { label: 已归档, value: archived }
+      - label: 站点草稿
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: 草稿不会出现在网站，但提交到公开仓库后源文件仍然公开。
+      - { label: 正文, name: body, widget: markdown }
+
+  - name: experiments
+    label: 实验记录
+    label_singular: 实验记录
+    description: 可复现实验、观察和未完成结论。
+    folder: src/content/experiments
+    create: true
+    delete: false
+    duplicate: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    slug: '{{fields._slug}}'
+    summary: '{{title}} · {{status}} · {{publishedAt}}'
+    sortable_fields:
+      - publishedAt
+      - updatedAt
+      - title
+      - status
+    fields:
+      - { label: 中文标题, name: title, widget: string }
+      - { label: 英文标题, name: titleEn, widget: string, required: false }
+      - { label: 摘要, name: description, widget: text }
+      - label: 首次发布日期
+        name: publishedAt
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        default: '{{now}}'
+      - label: 最后更新时间
+        name: updatedAt
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        required: false
+      - label: 实验状态
+        name: status
+        widget: select
+        default: idea
+        options:
+          - { label: 灵感, value: idea }
+          - { label: 实验中, value: running }
+          - { label: 已结论, value: concluded }
+      - label: 标签
+        name: tags
+        widget: list
+        required: false
+        allow_add: true
+        field: { label: 标签, name: tag, widget: string }
+      - label: 关联项目 slug
+        name: relatedProject
+        widget: string
+        required: false
+        hint: 例如 stm32f407-data-terminal。
+      - label: 关联知识库
+        name: relatedBook
+        widget: relation
+        collection: books
+        value_field: '{{slug}}'
+        display_fields:
+          - title
+          - titleEn
+        search_fields:
+          - title
+          - titleEn
+        required: false
+        filters:
+          - field: draft
+            values:
+              - false
+      - label: 站点草稿
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: 草稿不会出现在网站，但提交到公开仓库后源文件仍然公开。
+      - { label: 正文, name: body, widget: markdown }
+
+  - name: notes
+    label: 随笔
+    label_singular: 随笔
+    description: 短随笔与长随笔。
+    folder: src/content/notes
+    create: true
+    delete: false
+    duplicate: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    slug: '{{fields._slug}}'
+    summary: '{{title}} · {{kind}} · {{publishedAt}}'
+    sortable_fields:
+      - publishedAt
+      - updatedAt
+      - title
+      - kind
+    fields:
+      - { label: 中文标题, name: title, widget: string }
+      - { label: 英文标题, name: titleEn, widget: string, required: false }
+      - { label: 摘要, name: description, widget: text }
+      - label: 首次发布日期
+        name: publishedAt
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        default: '{{now}}'
+      - label: 最后更新时间
+        name: updatedAt
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        required: false
+      - label: 随笔类型
+        name: kind
+        widget: select
+        default: short
+        options:
+          - { label: 短随笔, value: short }
+          - { label: 长随笔, value: long }
+      - label: 标签
+        name: tags
+        widget: list
+        required: false
+        allow_add: true
+        field: { label: 标签, name: tag, widget: string }
+      - label: 站点草稿
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: 草稿不会出现在网站，但提交到公开仓库后源文件仍然公开。
+      - { label: 正文, name: body, widget: markdown }
+
+  - name: projects
+    label: 项目档案
+    label_singular: 项目档案
+    description: 真实项目、验证证据和未完成边界。
+    folder: src/content/projects
+    create: true
+    delete: false
+    duplicate: true
+    extension: mdx
+    format: frontmatter
+    identifier_field: title
+    slug: '{{fields._slug}}'
+    summary: '{{title}} · {{status}} · {{year}}'
+    sortable_fields:
+      - year
+      - updatedAt
+      - title
+      - status
+    fields:
+      - { label: 中文标题, name: title, widget: string }
+      - { label: 英文标题, name: titleEn, widget: string, required: false }
+      - { label: 摘要, name: description, widget: text }
+      - label: 首次发布日期
+        name: publishedAt
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        default: '{{now}}'
+      - label: 最后更新时间
+        name: updatedAt
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        required: false
+      - label: 项目状态
+        name: status
+        widget: select
+        default: exploring
+        options:
+          - { label: 探索中, value: exploring }
+          - { label: 进行中, value: active }
+          - { label: 已发布, value: released }
+          - { label: 已归档, value: archived }
+      - { label: 首页精选, name: featured, widget: boolean, default: false }
+      - { label: 项目年份, name: year, widget: number, value_type: int, min: 2000 }
+      - { label: 我的职责, name: role, widget: string }
+      - label: 标签
+        name: tags
+        widget: list
+        required: false
+        allow_add: true
+        field: { label: 标签, name: tag, widget: string }
+      - label: 技术栈
+        name: stack
+        widget: list
+        allow_add: true
+        min: 1
+        hint: 至少填写一项实际使用的 MCU、RTOS、SDK、框架或工具链。
+        field: { label: 技术, name: item, widget: string }
+      - label: 已完成验证
+        name: verification
+        widget: list
+        required: false
+        allow_add: true
+        field: { label: 验证证据, name: item, widget: text }
+      - label: 待完成验证
+        name: pendingVerification
+        widget: list
+        required: false
+        allow_add: true
+        field: { label: 待验证项, name: item, widget: text }
+      - { label: 源码地址, name: sourceUrl, widget: string, required: false }
+      - { label: 演示地址, name: demoUrl, widget: string, required: false }
+      - label: 站点草稿
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: 草稿不会出现在网站，但提交到公开仓库后源文件仍然公开。
+      - { label: 正文, name: body, widget: markdown }
+
+  - name: books
+    label: 知识库目录
+    label_singular: 知识库
+    description: 管理书房首页中的知识库卡片。
+    folder: src/content/books
+    create: true
+    delete: false
+    duplicate: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    slug: '{{fields._slug}}'
+    summary: '{{title}} · {{status}}'
+    sortable_fields:
+      - order
+      - updatedAt
+      - title
+      - status
+    fields:
+      - { label: 中文标题, name: title, widget: string }
+      - { label: 英文标题, name: titleEn, widget: string, required: false }
+      - { label: 简介, name: description, widget: text }
+      - label: 整理状态
+        name: status
+        widget: select
+        default: planning
+        options:
+          - { label: 构思中, value: planning }
+          - { label: 编写中, value: writing }
+          - { label: 已成体系, value: established }
+      - { label: 主题色, name: accent, widget: color, allowInput: true }
+      - { label: 排序, name: order, widget: number, value_type: int, min: 0, default: 1 }
+      - label: 最后更新时间
+        name: updatedAt
+        widget: datetime
+        type: date
+        format: YYYY-MM-DD
+        required: false
+      - label: 隐藏知识库
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: 开启后不生成知识库目录，也不会出现在首页和书房书架中。

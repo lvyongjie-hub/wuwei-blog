@@ -22,6 +22,7 @@ const books = defineCollection({
     accent: z.string(),
     order: z.number().int().default(0),
     updatedAt: z.coerce.date().optional(),
+    draft: z.boolean().default(false),
   }),
 });
 
@@ -45,6 +46,7 @@ const study = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/study' }),
   schema: z.object({
     ...commonFields,
+    featured: z.boolean().default(false),
     book: z.string(),
     chapter: z.string(),
     order: z.number().int().default(0),

@@ -26,6 +26,12 @@ npm run verify         # 运行完整发布前检查
 
 `npm run build` 后可使用 `npm run preview` 预览 Pagefind 搜索和静态输出。
 
+## 内容后台
+
+运行 `npm run dev` 后访问 `http://localhost:4321/admin/`。本地可以直接选择博客仓库目录，线上则使用 GitHub 细粒度 access token 登录。后台可以管理书房文章、实验记录、随笔、项目档案和知识库目录，内容仍保存为仓库内 Markdown/MDX，不使用数据库。
+
+首次登录、令牌权限、图片上传和发布边界见 [内容后台使用指南](./docs/admin-guide.md)。仓库公开，后台中的 `draft: true` 不能替代私人草稿库。
+
 ## 内容工作流
 
 - 知识库文章放在 `src/content/study/`，项目放在 `src/content/projects/`。
@@ -38,7 +44,7 @@ npm run verify         # 运行完整发布前检查
 
 ## 部署
 
-源码托管在 [GitHub](https://github.com/lvyongjie-hub/wuwei-blog)，`main` 分支用于 Cloudflare Pages 正式构建。Cloudflare Pages 构建命令为 `npm run build`，输出目录为 `dist`。环境变量参考 `.env.example`。
+源码托管在 [GitHub](https://github.com/lvyongjie-hub/wuwei-blog)，`main` 分支用于 Cloudflare Workers 正式构建。构建命令为 `npm run build`，部署命令为 `npx wrangler deploy`，环境变量参考 `.env.example`。
 
 ## 许可证
 

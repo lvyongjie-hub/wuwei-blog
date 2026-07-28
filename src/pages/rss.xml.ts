@@ -4,12 +4,14 @@ import { getCollection } from 'astro:content';
 import { SITE } from '@/lib/site';
 
 export const GET: APIRoute = async (context) => {
-  const [projects, study, experiments, notes] = await Promise.all([
+  const [projects, books, study, experiments, notes] = await Promise.all([
     getCollection('projects', ({ data }) => !data.draft),
+    getCollection('books', ({ data }) => !data.draft),
     getCollection('study', ({ data }) => !data.draft),
     getCollection('experiments', ({ data }) => !data.draft),
     getCollection('notes', ({ data }) => !data.draft),
   ]);
+  const publishedBookIds = new Set(books.map((book) => book.id));
 
   const items = [
     ...projects.map((entry) => ({
@@ -19,13 +21,15 @@ export const GET: APIRoute = async (context) => {
       link: `/projects/${entry.id}/`,
       customData: '<category>项目档案</category>',
     })),
-    ...study.map((entry) => ({
-      title: entry.data.title,
-      description: entry.data.description,
-      pubDate: entry.data.updatedAt ?? entry.data.publishedAt,
-      link: `/study/${entry.data.book}/${entry.id}/`,
-      customData: '<category>书房文章</category>',
-    })),
+    ...study
+      .filter((entry) => publishedBookIds.has(entry.data.book))
+      .map((entry) => ({
+        title: entry.data.title,
+        description: entry.data.description,
+        pubDate: entry.data.updatedAt ?? entry.data.publishedAt,
+        link: `/study/${entry.data.book}/${entry.id}/`,
+        customData: '<category>书房文章</category>',
+      })),
     ...experiments.map((entry) => ({
       title: entry.data.title,
       description: entry.data.description,
@@ -45,7 +49,7 @@ export const GET: APIRoute = async (context) => {
   return rss({
     title: `${SITE.name} · RSS`,
     description: SITE.description,
-    site: context.site ?? 'https://wuwei-blog.pages.dev',
+    site: context.site ?? 'https://wuwei-blog.1035945832.workers.dev',
     items,
     customData: '<language>zh-CN</language>',
   });

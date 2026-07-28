@@ -5,4 +5,5 @@ description: 记录 TinyML、端侧模型、功耗与延迟测量，以及智能
 status: planning
 accent: '#b17a3d'
 order: 2
+draft: false
 ---

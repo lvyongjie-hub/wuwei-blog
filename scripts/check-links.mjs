@@ -4,7 +4,8 @@ import { extname, join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-const root = resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
+const outputRoot = resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
+const clientRoot = resolve(outputRoot, 'client');
 const contentTypes = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
@@ -19,6 +20,8 @@ const contentTypes = {
 const server = createServer((request, response) => {
   const requestPath = decodeURIComponent(new URL(request.url ?? '/', 'http://localhost').pathname);
   let relative = requestPath.replace(/^\/+/, '');
+  const root =
+    relative === 'pagefind' || relative.startsWith('pagefind/') ? outputRoot : clientRoot;
   let file = resolve(join(root, relative));
   if (!file.startsWith(root)) {
     response.writeHead(403).end();
@@ -49,7 +52,7 @@ const args = [
   '--clean-urls',
   '--check-fragments',
   '--skip',
-  '^(https?://github.com|https?://static.cloudflareinsights.com|mailto:|https://wuwei-blog.pages.dev/)',
+  '^(https?://github.com|https?://static.cloudflareinsights.com|mailto:|https://wuwei-blog.1035945832.workers.dev/)',
 ];
 
 const child = spawn(command, args, { stdio: 'inherit', shell: false });

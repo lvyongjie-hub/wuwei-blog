@@ -4,6 +4,7 @@ titleEn: Article title
 description: 一句话说明这篇文章解决的问题。
 publishedAt: 2026-01-01
 updatedAt: 2026-01-01
+featured: false
 book: embedded-reliability
 chapter: 01-foundation
 order: 1
