@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 Sitemap: https://wuwei-blog.pages.dev/sitemap-index.xml

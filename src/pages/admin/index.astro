@@ -1,0 +1,78 @@
+---
+export const prerender = true;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>内容后台 · 五味书房</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, sans-serif;
+        background: #f3efe6;
+        color: #25241f;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      .cms-loading,
+      noscript {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        text-align: center;
+        background: #f3efe6;
+      }
+
+      .cms-loading p,
+      noscript p {
+        max-width: 32rem;
+        line-height: 1.8;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root,
+        .cms-loading,
+        noscript {
+          background: #1d211e;
+          color: #eee8dc;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="nc-root"></div>
+    <div class="cms-loading" data-cms-loading role="status">
+      <p>正在加载五味书房内容后台……</p>
+    </div>
+    <noscript>
+      <p>内容后台需要 JavaScript。网站正文在关闭 JavaScript 时仍然可以正常阅读。</p>
+    </noscript>
+
+    <script>
+      import CMS from '@sveltia/cms';
+
+      const loading = document.querySelector<HTMLElement>('[data-cms-loading]');
+
+      CMS.init()
+        .then(() => loading?.remove())
+        .catch((error: unknown) => {
+          if (loading) {
+            loading.innerHTML = '<p>后台加载失败，请检查网络连接和后台配置。</p>';
+          }
+          console.error('Failed to initialize the content admin:', error);
+        });
+    </script>
+  </body>
+</html>

@@ -9,7 +9,7 @@ import remarkMath from 'remark-math';
 export default defineConfig({
   site: process.env.SITE_URL ?? 'https://wuwei-blog.pages.dev',
   output: 'static',
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/admin/') })],
   markdown: {
     processor: unified({
       remarkPlugins: [remarkMath],

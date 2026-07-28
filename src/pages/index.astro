@@ -4,8 +4,9 @@ import BookCard from '@/components/BookCard.astro';
 import EmptyState from '@/components/EmptyState.astro';
 import NowPanel from '@/components/NowPanel.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
+import StatusStamp from '@/components/StatusStamp.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { SITE } from '@/lib/site';
+import { EXPERIMENT_STATUS, formatDate, SITE } from '@/lib/site';
 
 const projects = (await getCollection('projects', ({ data }) => !data.draft))
   .sort(
@@ -14,8 +15,21 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft))
       b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
   )
   .slice(0, 2);
-const books = (await getCollection('books')).sort((a, b) => a.data.order - b.data.order);
-const study = await getCollection('study', ({ data }) => !data.draft);
+const books = (await getCollection('books', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const visibleBookIds = new Set(books.map((book) => book.id));
+const study = (await getCollection('study', ({ data }) => !data.draft))
+  .filter((article) => visibleBookIds.has(article.data.book))
+  .sort(
+    (a, b) =>
+      Number(b.data.featured) - Number(a.data.featured) ||
+      b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
+  );
+const homepageArticles = study.slice(0, 2);
+const latestExperiment = (await getCollection('experiments', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
+)[0];
 const notes = (await getCollection('notes', ({ data }) => !data.draft))
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
   .slice(0, 3);
@@ -104,7 +118,42 @@ const articleCount = new Map(
         </div>
         <a class="section-link" href="/study/">前往书房 <span aria-hidden="true">→</span></a>
       </div>
-      <EmptyState message="首篇深度文章还在打磨。这里不会用虚构内容填满版面。" />
+      {
+        homepageArticles.length > 0 ? (
+          <div class="project-grid">
+            {homepageArticles.map((article) => {
+              const book = books.find((item) => item.id === article.data.book);
+              return (
+                <article class="paper-card">
+                  <div class="card-meta">
+                    <span>{book?.data.title ?? '书房文章'}</span>
+                    <time datetime={article.data.publishedAt.toISOString()}>
+                      {formatDate(article.data.publishedAt)}
+                    </time>
+                  </div>
+                  <h2 class="card-title">
+                    <a href={`/study/${article.data.book}/${article.id}/`}>{article.data.title}</a>
+                  </h2>
+                  {article.data.titleEn && <p class="card-meta">{article.data.titleEn}</p>}
+                  <p class="card-description">{article.data.description}</p>
+                  <div class="card-footer">
+                    <ul class="tag-list" aria-label="文章标签">
+                      {article.data.tags.slice(0, 4).map((tag) => (
+                        <li class="tag">{tag}</li>
+                      ))}
+                    </ul>
+                    <a class="section-link" href={`/study/${article.data.book}/${article.id}/`}>
+                      阅读文章 →
+                    </a>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <EmptyState message="首篇深度文章还在打磨。这里不会用虚构内容填满版面。" />
+        )
+      }
     </section>
 
     <section class="section" aria-labelledby="current-work">
@@ -117,6 +166,40 @@ const articleCount = new Map(
           </p>
         </div>
         <a class="section-link" href="/experiments/">实验记录 <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="home-latest-entry">
+        {
+          latestExperiment ? (
+            <article class="paper-card">
+              <div class="card-meta">
+                <time datetime={latestExperiment.data.publishedAt.toISOString()}>
+                  {formatDate(latestExperiment.data.publishedAt)}
+                </time>
+                <StatusStamp label={EXPERIMENT_STATUS[latestExperiment.data.status]} />
+              </div>
+              <h2 class="card-title">
+                <a href={`/experiments/${latestExperiment.id}/`}>{latestExperiment.data.title}</a>
+              </h2>
+              <p class="card-description">{latestExperiment.data.description}</p>
+              <div class="card-footer">
+                <ul class="tag-list" aria-label="实验标签">
+                  {latestExperiment.data.tags.slice(0, 4).map((tag) => (
+                    <li class="tag">{tag}</li>
+                  ))}
+                </ul>
+                <a class="section-link" href={`/experiments/${latestExperiment.id}/`}>
+                  打开记录 →
+                </a>
+              </div>
+            </article>
+          ) : (
+            <EmptyState
+              title="实验记录尚未发布"
+              message="第一条真实实验完成后，首页会自动展示最新记录。"
+              eyebrow="LAB PREPARING"
+            />
+          )
+        }
       </div>
       <NowPanel />
       <div class="book-grid home-book-grid">

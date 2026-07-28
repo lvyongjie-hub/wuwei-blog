@@ -687,6 +687,10 @@ summary:focus-visible {
   margin-top: 1rem;
 }
 
+.home-latest-entry {
+  margin-bottom: 1rem;
+}
+
 .note-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }

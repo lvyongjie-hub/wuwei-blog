@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const getStaticPaths = (async () => {
-  const books = await getCollection('books');
+  const books = await getCollection('books', ({ data }) => !data.draft);
   const articles = await getCollection('study', ({ data }) => !data.draft);
   return books.map((book) => ({
     params: { book: book.id },
