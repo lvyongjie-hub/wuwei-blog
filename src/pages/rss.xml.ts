@@ -49,7 +49,7 @@ export const GET: APIRoute = async (context) => {
   return rss({
     title: `${SITE.name} · RSS`,
     description: SITE.description,
-    site: context.site ?? 'https://wuwei-blog.pages.dev',
+    site: context.site ?? 'https://wuwei-blog.1035945832.workers.dev',
     items,
     customData: '<language>zh-CN</language>',
   });

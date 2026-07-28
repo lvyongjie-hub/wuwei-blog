@@ -92,9 +92,9 @@ V2 正式发布至少包含：
 ### 3.8 互动与部署
 
 - GitHub Discussions 配置完成后启用 Giscus；未配置时保持当前占位状态。
-- 配置 Cloudflare Pages：`main` 为正式站点，Pull Request/功能分支生成预览部署。
+- 配置 Cloudflare Workers：`main` 为正式站点，Pull Request/功能分支生成预览部署。
 - 配置 Cloudflare Web Analytics 时只使用无广告追踪的基础统计。
-- 最终域名未确定前可以先使用 `pages.dev` 地址完成部署验收。
+- 最终域名未确定前可以先使用 `workers.dev` 地址完成部署验收。
 - 环境变量和平台 ID 只保存在 GitHub/Cloudflare 配置中，不写入仓库。
 
 ### 3.9 Git 内容后台
@@ -133,7 +133,7 @@ V2 不包含：
 - 首篇嵌入式 × AI 实验的环境、步骤和结果。
 - STM32F407 项目的真实照片、截图、波形或测试记录。
 - Giscus 的仓库、仓库 ID 和分类 ID。
-- Cloudflare Pages 项目与 Web Analytics token。
+- Cloudflare Workers 项目与 Web Analytics token。
 - 最终域名及其 DNS 控制权。
 
 ## 6. 实施阶段
@@ -155,7 +155,7 @@ V2 不包含：
 
 ### 阶段 C：预览与发布
 
-- 配置 Giscus、Cloudflare Pages 和可选 Analytics。
+- 配置 Giscus、Cloudflare Workers 和可选 Analytics。
 - 在 Cloudflare 预览环境完成桌面、移动、明暗主题和社交预览检查。
 - 完成发布前自动检查与人工浏览器验收。
 - 合并至 `main`，发布并标记 `v2.0.0`。

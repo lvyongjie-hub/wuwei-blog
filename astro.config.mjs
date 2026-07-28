@@ -1,3 +1,4 @@
+import cloudflare from '@astrojs/cloudflare';
 import mdx from '@astrojs/mdx';
 import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
@@ -7,7 +8,7 @@ import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
 
 export default defineConfig({
-  site: process.env.SITE_URL ?? 'https://wuwei-blog.pages.dev',
+  site: process.env.SITE_URL ?? 'https://wuwei-blog.1035945832.workers.dev',
   output: 'static',
   integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/admin/') })],
   markdown: {
@@ -24,7 +25,10 @@ export default defineConfig({
       wrap: true,
     },
   },
+
   vite: {
     plugins: [tailwindcss()],
   },
+
+  adapter: cloudflare(),
 });

@@ -86,7 +86,7 @@ freertos-resource-ownership
 Sveltia CMS 当前尚不支持 Editorial Workflow。后台点击保存后会直接向 `main` 提交：
 
 1. GitHub Actions 自动运行格式、类型、构建、链接和可访问性检查。
-2. Cloudflare Pages 在检查和构建成功后更新正式站点。
+2. Cloudflare Workers 在检查和构建成功后更新正式站点。
 3. 构建失败时，正式站点继续保留上一个成功版本；应修正内容后再次保存，或在 GitHub 中回退错误提交。
 
 后台删除入口已经禁用。需要撤下内容时，优先使用以下方式：

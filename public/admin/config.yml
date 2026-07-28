@@ -11,8 +11,8 @@ backend:
     deleteMedia: 'content: delete media {{path}}'
 
 app_title: 五味书房内容后台
-site_url: https://wuwei-blog.pages.dev
-display_url: https://wuwei-blog.pages.dev
+site_url: https://wuwei-blog.1035945832.workers.dev
+display_url: https://wuwei-blog.1035945832.workers.dev
 show_preview_links: true
 
 logo:

@@ -44,7 +44,7 @@ npm run verify         # 运行完整发布前检查
 
 ## 部署
 
-源码托管在 [GitHub](https://github.com/lvyongjie-hub/wuwei-blog)，`main` 分支用于 Cloudflare Pages 正式构建。Cloudflare Pages 构建命令为 `npm run build`，输出目录为 `dist`。环境变量参考 `.env.example`。
+源码托管在 [GitHub](https://github.com/lvyongjie-hub/wuwei-blog)，`main` 分支用于 Cloudflare Workers 正式构建。构建命令为 `npm run build`，部署命令为 `npx wrangler deploy`，环境变量参考 `.env.example`。
 
 ## 许可证
 
