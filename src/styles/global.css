@@ -541,7 +541,20 @@ summary:focus-visible {
   border-radius: 1.25rem;
   background: color-mix(in srgb, var(--paper-deep) 78%, transparent);
   box-shadow: 7px 7px 0 color-mix(in srgb, var(--copper) 78%, transparent);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0;
   transform: rotate(2deg);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.hero-bookplate:hover {
+  border-color: color-mix(in srgb, var(--copper) 70%, var(--line-strong));
+  box-shadow: 9px 9px 0 color-mix(in srgb, var(--copper) 86%, transparent);
+  transform: rotate(0deg) translateY(-2px);
 }
 
 .hero-bookplate > span {

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BookCard from '@/components/BookCard.astro';
 import EmptyState from '@/components/EmptyState.astro';
+import HomeIntro from '@/components/HomeIntro.astro';
 import NowPanel from '@/components/NowPanel.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
 import StatusStamp from '@/components/StatusStamp.astro';
@@ -38,7 +39,8 @@ const articleCount = new Map(
 );
 ---
 
-<BaseLayout>
+<BaseLayout homeIntro>
+  <HomeIntro slot="page-overlay" />
   <div class="container">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
@@ -64,13 +66,20 @@ const articleCount = new Map(
           <span class="desk-label">ENGINEER'S DIGITAL DESK</span>
           <span class="desk-date">EST. 2026</span>
         </div>
-        <div class="hero-bookplate" aria-hidden="true">
+        <button
+          class="hero-bookplate"
+          type="button"
+          data-intro-replay
+          data-pagefind-ignore
+          aria-label="重播五味网站序章"
+          title="重播网站序章"
+        >
           <span>五味</span>
-          <svg viewBox="0 0 190 72" fill="none">
+          <svg viewBox="0 0 190 72" fill="none" aria-hidden="true">
             <path d="M3 46h22l9-23 13 39 13-31 10 15h24l8-12 11 12h73"></path>
             <circle cx="3" cy="46" r="2.5"></circle><circle cx="186" cy="46" r="2.5"></circle>
           </svg>
-        </div>
+        </button>
         <p class="desk-quote">工程档案、实验笔记，也有书页边缘留下的思考。</p>
         <div class="desk-card-bottom">
           <span class="desk-meta">MCU · RTOS · RELIABILITY · TINYML</span>

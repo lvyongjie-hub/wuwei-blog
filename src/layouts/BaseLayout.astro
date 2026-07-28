@@ -9,6 +9,7 @@ interface Props {
   description?: string;
   ogImage?: string;
   noindex?: boolean;
+  homeIntro?: boolean;
 }
 
 const {
@@ -16,6 +17,7 @@ const {
   description = SITE.description,
   ogImage = '/og/default.svg',
   noindex = false,
+  homeIntro = false,
 } = Astro.props;
 const fullTitle = title === SITE.name ? title : `${title} · ${SITE.name}`;
 const canonical = new URL(
@@ -72,6 +74,26 @@ const structuredData = {
         }
       })();
     </script>
+    <script is:inline define:vars={{ homeIntro }}>
+      (() => {
+        if (!homeIntro) return;
+        const root = document.documentElement;
+        try {
+          const key = 'wuwei-home-intro-v1';
+          if (sessionStorage.getItem(key) === 'seen') {
+            root.dataset.homeIntro = 'seen';
+            return;
+          }
+          sessionStorage.setItem(key, 'seen');
+          root.dataset.homeIntro = 'pending';
+        } catch {
+          root.dataset.homeIntro = 'pending';
+        }
+        window.setTimeout(() => {
+          if (root.dataset.homeIntro === 'pending') root.dataset.homeIntro = 'seen';
+        }, 4500);
+      })();
+    </script>
     <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     {
       analyticsToken && (
@@ -85,6 +107,7 @@ const structuredData = {
     }
   </head>
   <body>
+    <slot name="page-overlay" />
     <a class="skip-link" href="#main-content">跳到主要内容</a>
     <div class="reading-progress" data-reading-progress aria-hidden="true"><span></span></div>
     <div class="site-shell">

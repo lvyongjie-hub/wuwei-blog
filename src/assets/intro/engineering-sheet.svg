@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
+  <defs>
+    <pattern id="minor-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0v24" fill="none" stroke="#315747" stroke-opacity=".09" />
+    </pattern>
+    <pattern id="major-grid" width="120" height="120" patternUnits="userSpaceOnUse">
+      <rect width="120" height="120" fill="url(#minor-grid)" />
+      <path d="M120 0H0v120" fill="none" stroke="#315747" stroke-opacity=".15" />
+    </pattern>
+    <filter id="paper-noise" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence baseFrequency=".72" numOctaves="3" seed="8" type="fractalNoise" />
+      <feColorMatrix values="0 0 0 0 .18 0 0 0 0 .16 0 0 0 0 .12 0 0 0 .16 0" />
+      <feBlend in="SourceGraphic" mode="multiply" />
+    </filter>
+    <marker id="arrow" markerHeight="7" markerWidth="7" orient="auto" refX="6" refY="3.5">
+      <path d="M0 0 7 3.5 0 7Z" fill="#b17a3d" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="760" rx="20" fill="#ede5d6" />
+  <rect width="1200" height="760" rx="20" fill="url(#major-grid)" />
+  <rect width="1200" height="760" rx="20" fill="transparent" filter="url(#paper-noise)" opacity=".35" />
+
+  <g fill="#25241f">
+    <text x="66" y="70" font-family="monospace" font-size="18" letter-spacing="4">FIELD NOTE / 024</text>
+    <text x="66" y="112" font-family="serif" font-size="34" font-weight="600">SYSTEM RELIABILITY MAP</text>
+    <text x="897" y="70" font-family="monospace" font-size="14" letter-spacing="2">WUWEI LAB</text>
+    <text x="897" y="96" font-family="monospace" font-size="12" opacity=".58">MCU · RTOS · EDGE AI</text>
+  </g>
+  <path d="M66 136h1068" stroke="#b17a3d" stroke-width="3" />
+
+  <g font-family="monospace" font-size="14" fill="#315747" stroke="#315747">
+    <rect x="72" y="190" width="212" height="132" rx="8" fill="#dbe7dc" fill-opacity=".72" stroke-width="2" />
+    <text x="96" y="225" stroke="none" font-weight="700">MCU CORE</text>
+    <path d="M96 247h164M96 272h116M96 297h142" opacity=".42" />
+
+    <rect x="390" y="174" width="232" height="164" rx="8" fill="#ede5d6" stroke-width="2" />
+    <text x="416" y="210" stroke="none" font-weight="700">RTOS SCHEDULER</text>
+    <path d="M416 235h174M416 262h72m16 0h86M416 289h112m16 0h46" opacity=".42" />
+
+    <rect x="734" y="190" width="202" height="132" rx="8" fill="#f0dfc7" fill-opacity=".68" stroke="#b17a3d" stroke-width="2" />
+    <text x="758" y="225" stroke="none" fill="#7b522d" font-weight="700">TINYML NODE</text>
+    <circle cx="780" cy="269" r="12" fill="none" />
+    <circle cx="835" cy="269" r="12" fill="none" />
+    <circle cx="890" cy="269" r="12" fill="none" />
+    <path d="M792 269h31m24 0h31" />
+
+    <rect x="1016" y="190" width="118" height="132" rx="8" fill="#ede5d6" stroke-width="2" />
+    <text x="1037" y="225" stroke="none" font-size="12" font-weight="700">OUTPUT</text>
+    <path d="M1038 258h72M1038 283h52" opacity=".42" />
+  </g>
+
+  <g fill="none" stroke="#b17a3d" stroke-width="3" marker-end="url(#arrow)">
+    <path d="M284 256h94" />
+    <path d="M622 256h100" />
+    <path d="M936 256h68" />
+  </g>
+
+  <g transform="translate(72 390)">
+    <text y="0" fill="#25241f" font-family="monospace" font-size="15" letter-spacing="3">TIMING / OBSERVED SIGNAL</text>
+    <path d="M0 44h1062M0 104h1062M0 164h1062" stroke="#315747" stroke-opacity=".18" />
+    <path d="M0 44h92v-28h58v56h76V44h104v-18h44v36h88V44h128v-28h42v56h74V44h120v-18h52v36h78V44h96" fill="none" stroke="#315747" stroke-width="5" />
+    <path d="M0 104h118l18-42 28 84 32-70 22 28h80l24-24 28 24h102l34-52 34 104 34-74 28 22h104l20-18 22 18h172" fill="none" stroke="#b17a3d" stroke-width="4" />
+    <path d="M0 164h78v-20h68v40h116v-20h90v-20h92v40h126v-20h66v-20h96v40h104v-20h86v-20h70v40h80" fill="none" stroke="#315747" stroke-width="3" stroke-dasharray="9 9" />
+    <g fill="#25241f" font-family="monospace" font-size="12" opacity=".58">
+      <text x="0" y="210">BOOT</text>
+      <text x="185" y="210">INIT</text>
+      <text x="392" y="210">SCHEDULE</text>
+      <text x="640" y="210">INFERENCE</text>
+      <text x="908" y="210">VERIFY</text>
+    </g>
+  </g>
+
+  <g transform="translate(72 688)" fill="#25241f" font-family="monospace" font-size="12">
+    <text>NOTE: ABSTRACT SYSTEM DIAGRAM · NO PROJECT DATA</text>
+    <text x="808">REV 0.2 / OPEN ARCHIVE</text>
+  </g>
+</svg>

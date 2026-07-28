@@ -1,0 +1,453 @@
+<section
+  class="home-intro"
+  data-home-intro-overlay
+  data-active="false"
+  data-mode="motion"
+  data-phase="signal"
+  data-renderer="fallback"
+  role="dialog"
+  aria-modal="true"
+  aria-label="五味网站序章"
+  aria-hidden="true"
+  inert
+>
+  <div class="home-intro__backdrop" data-intro-backdrop aria-hidden="true"></div>
+
+  <div class="home-intro__visual" data-intro-visual aria-hidden="true">
+    <svg class="home-intro__fallback" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="intro-glow" cx="50%" cy="46%" r="58%">
+          <stop offset="0" stop-color="#315747" stop-opacity=".5"></stop>
+          <stop offset=".58" stop-color="#18231e" stop-opacity=".18"></stop>
+          <stop offset="1" stop-color="#101714" stop-opacity="0"></stop>
+        </radialGradient>
+        <pattern id="intro-grid" width="42" height="42" patternUnits="userSpaceOnUse">
+          <path d="M42 0H0v42" fill="none" stroke="#91b89b" stroke-opacity=".09"></path>
+        </pattern>
+        <filter id="intro-soft-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="8" result="blur"></feGaussianBlur>
+          <feMerge
+            ><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"
+            ></feMergeNode></feMerge
+          >
+        </filter>
+      </defs>
+
+      <rect width="1200" height="760" fill="url(#intro-glow)"></rect>
+      <rect width="1200" height="760" fill="url(#intro-grid)"></rect>
+
+      <g class="home-intro__fallback-papers">
+        <g transform="translate(184 233) rotate(-7 230 140)" opacity=".58">
+          <rect
+            width="460"
+            height="280"
+            rx="12"
+            fill="#dbe7dc"
+            fill-opacity=".14"
+            stroke="#91b89b"
+            stroke-opacity=".42"></rect>
+          <path
+            d="M34 54h190M34 84h326M34 114h254M34 208h82l22-52 34 102 40-83 28 33h146"
+            fill="none"
+            stroke="#91b89b"
+            stroke-opacity=".52"
+            stroke-width="3"></path>
+        </g>
+        <g transform="translate(586 196) rotate(5 226 154)" opacity=".64">
+          <rect
+            width="452"
+            height="308"
+            rx="12"
+            fill="#f0dfc7"
+            fill-opacity=".11"
+            stroke="#e0a761"
+            stroke-opacity=".46"></rect>
+          <path d="M38 50h132M38 82h278M38 114h218" stroke="#e0a761" stroke-opacity=".52"></path>
+          <g fill="none" stroke="#e0a761" stroke-opacity=".54">
+            <circle cx="88" cy="190" r="24"></circle><circle cx="218" cy="190" r="24"
+            ></circle><circle cx="348" cy="190" r="24"></circle>
+            <path d="M112 190h82M242 190h82"></path>
+          </g>
+        </g>
+      </g>
+
+      <g
+        class="home-intro__fallback-circuit"
+        fill="none"
+        stroke="#91b89b"
+        stroke-width="2"
+        opacity=".46"
+      >
+        <path d="M82 124h210l34 34h126"></path>
+        <path d="M1118 590H926l-42-42H756"></path>
+        <path d="M100 646h182l28-28h112"></path>
+        <circle cx="82" cy="124" r="5" fill="#e0a761" stroke="none"></circle>
+        <circle cx="1118" cy="590" r="5" fill="#e0a761" stroke="none"></circle>
+      </g>
+
+      <path
+        class="home-intro__signal home-intro__signal--glow"
+        d="M-20 392h155l32-82 46 166 52-130 38 46h137l35-42 42 42h118l30-82 47 166 52-130 38 46h140l38-42 40 42h190"
+        fill="none"
+        stroke="#e0a761"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="14"
+        opacity=".2"
+        filter="url(#intro-soft-glow)"></path>
+      <path
+        class="home-intro__signal"
+        d="M-20 392h155l32-82 46 166 52-130 38 46h137l35-42 42 42h118l30-82 47 166 52-130 38 46h140l38-42 40 42h190"
+        fill="none"
+        stroke="#e0a761"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="4"></path>
+    </svg>
+    <canvas class="home-intro__canvas" data-intro-canvas></canvas>
+  </div>
+
+  <div class="home-intro__plate" data-intro-plate aria-hidden="true">
+    <span>五味</span>
+    <svg viewBox="0 0 190 72" fill="none">
+      <path d="M3 46h22l9-23 13 39 13-31 10 15h24l8-12 11 12h73"></path>
+      <circle cx="3" cy="46" r="2.5"></circle><circle cx="186" cy="46" r="2.5"></circle>
+    </svg>
+  </div>
+
+  <div class="home-intro__copy" data-intro-copy>
+    <strong>五味</strong>
+    <span>工程师的数字书桌</span>
+  </div>
+
+  <div class="home-intro__meta" aria-hidden="true">
+    <span>WUWEI / SIGNAL INIT</span>
+    <span>MCU · RTOS · EDGE AI</span>
+  </div>
+
+  <button class="home-intro__skip" type="button" data-intro-skip>
+    <span>跳过</span><kbd>ESC</kbd>
+  </button>
+  <p class="home-intro__hint">点击任意位置加速进入</p>
+</section>
+
+<script>
+  import { mountHomeIntro } from '@/scripts/home-intro';
+
+  mountHomeIntro();
+</script>
+
+<style is:global>
+  html[data-home-intro='pending'],
+  html[data-home-intro='playing'] {
+    overflow: hidden;
+    background: #101714;
+  }
+
+  html[data-home-intro='playing'] .site-shell {
+    opacity: calc(0.56 + var(--intro-page-reveal, 0) * 0.44);
+    filter: blur(calc((1 - var(--intro-page-reveal, 0)) * 7px));
+  }
+
+  .home-intro {
+    position: fixed;
+    z-index: 200;
+    inset: 0;
+    display: none;
+    overflow: hidden;
+    background: #101714;
+    color: #f3efe6;
+    isolation: isolate;
+    touch-action: manipulation;
+  }
+
+  html[data-home-intro='pending'] .home-intro,
+  .home-intro[data-active='true'] {
+    display: block;
+  }
+
+  .home-intro__backdrop,
+  .home-intro__visual,
+  .home-intro__fallback,
+  .home-intro__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .home-intro__backdrop {
+    z-index: -3;
+    background:
+      radial-gradient(circle at 22% 18%, rgba(49, 87, 71, 0.38), transparent 34rem),
+      radial-gradient(circle at 78% 76%, rgba(177, 122, 61, 0.2), transparent 30rem),
+      linear-gradient(145deg, #0c1210, #15201b 58%, #0e1412);
+    will-change: opacity;
+  }
+
+  .home-intro__backdrop::after {
+    position: absolute;
+    inset: 0;
+    opacity: 0.11;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    mix-blend-mode: screen;
+    content: '';
+  }
+
+  .home-intro__visual {
+    z-index: -2;
+    will-change: opacity;
+  }
+
+  .home-intro__fallback {
+    overflow: visible;
+    opacity: 0.9;
+    transform: scale(1.04);
+    transition: opacity 260ms ease;
+  }
+
+  .home-intro__canvas {
+    display: block;
+    opacity: 0;
+    transition: opacity 260ms ease;
+  }
+
+  .home-intro[data-renderer='webgl'] .home-intro__canvas[data-ready='true'] {
+    opacity: 1;
+  }
+
+  .home-intro[data-renderer='webgl'] .home-intro__fallback {
+    opacity: 0.08;
+  }
+
+  .home-intro__signal {
+    stroke-dasharray: 1650;
+    stroke-dashoffset: 1650;
+  }
+
+  html[data-home-intro='pending'] .home-intro__signal,
+  .home-intro[data-active='true'] .home-intro__signal {
+    animation: home-intro-signal 1.05s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+
+  .home-intro__fallback-papers {
+    opacity: 0;
+    transform: translateY(46px) scale(0.92);
+    transform-origin: center;
+  }
+
+  html[data-home-intro='pending'] .home-intro__fallback-papers,
+  .home-intro[data-active='true'] .home-intro__fallback-papers {
+    animation: home-intro-papers 0.9s 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .home-intro__fallback-circuit {
+    opacity: 0;
+  }
+
+  html[data-home-intro='pending'] .home-intro__fallback-circuit,
+  .home-intro[data-active='true'] .home-intro__fallback-circuit {
+    animation: home-intro-circuit 0.7s 0.72s ease forwards;
+  }
+
+  .home-intro__plate {
+    position: fixed;
+    z-index: 3;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: min(158px, 38vw);
+    aspect-ratio: 1;
+    border: 2px solid #315747;
+    border-radius: 1.1rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.24), transparent 44%), #e8e0d2;
+    box-shadow:
+      0 0 0 5px #b17a3d,
+      0 0 0 7px rgba(224, 167, 97, 0.34),
+      0 24px 60px rgba(0, 0, 0, 0.46),
+      inset 0 0 30px rgba(49, 87, 71, 0.12);
+    color: #25241f;
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(0.82) rotate(-2.5deg);
+    will-change: transform, opacity;
+  }
+
+  .home-intro__plate::before {
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(37, 36, 31, 0.28);
+    border-radius: 0.75rem;
+    content: '';
+  }
+
+  .home-intro__plate > span {
+    margin-top: -1.1rem;
+    padding-right: 0.14em;
+    font-family: 'Noto Serif SC Variable', serif;
+    font-size: clamp(2.05rem, 7vw, 2.7rem);
+    font-weight: 650;
+    letter-spacing: -0.14em;
+  }
+
+  .home-intro__plate svg {
+    position: absolute;
+    right: 0.85rem;
+    bottom: 0.65rem;
+    left: 0.85rem;
+    width: calc(100% - 1.7rem);
+    color: #b17a3d;
+  }
+
+  .home-intro__plate path,
+  .home-intro__plate circle {
+    stroke: currentColor;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .home-intro__copy {
+    position: fixed;
+    z-index: 2;
+    top: calc(50% + min(126px, 29vw));
+    left: 50%;
+    display: grid;
+    min-width: min(360px, calc(100vw - 3rem));
+    transform: translate3d(-50%, 16px, 0);
+    opacity: 0;
+    text-align: center;
+    will-change: transform, opacity;
+  }
+
+  .home-intro__copy strong {
+    font-family: 'Noto Serif SC Variable', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+  }
+
+  .home-intro__copy span {
+    margin-top: 0.42rem;
+    color: rgba(243, 239, 230, 0.66);
+    font-size: 0.76rem;
+    letter-spacing: 0.28em;
+  }
+
+  .home-intro__meta {
+    position: fixed;
+    z-index: 4;
+    top: clamp(1.25rem, 4vw, 2.25rem);
+    left: clamp(1.25rem, 4vw, 2.5rem);
+    display: grid;
+    gap: 0.35rem;
+    color: rgba(243, 239, 230, 0.48);
+    font-family: 'JetBrains Mono Variable', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+  }
+
+  .home-intro__meta span:first-child {
+    color: #e0a761;
+  }
+
+  .home-intro__skip {
+    position: fixed;
+    z-index: 5;
+    top: clamp(1rem, 3vw, 1.75rem);
+    right: clamp(1rem, 3vw, 1.75rem);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 40px;
+    padding: 0.48rem 0.55rem 0.48rem 0.8rem;
+    border: 1px solid rgba(243, 239, 230, 0.22);
+    border-radius: 999px;
+    background: rgba(16, 23, 20, 0.56);
+    color: rgba(243, 239, 230, 0.78);
+    cursor: pointer;
+    font-size: 0.72rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .home-intro__skip:hover {
+    border-color: rgba(224, 167, 97, 0.62);
+    color: #fff;
+  }
+
+  .home-intro__skip kbd {
+    border-color: rgba(243, 239, 230, 0.16);
+    background: rgba(243, 239, 230, 0.08);
+    box-shadow: none;
+    color: rgba(243, 239, 230, 0.54);
+    font-size: 0.58rem;
+  }
+
+  .home-intro__hint {
+    position: fixed;
+    z-index: 4;
+    right: 0;
+    bottom: clamp(1rem, 3vw, 1.75rem);
+    left: 0;
+    margin: 0;
+    color: rgba(243, 239, 230, 0.42);
+    font-family: 'JetBrains Mono Variable', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-align: center;
+  }
+
+  .home-intro[data-mode='static'] .home-intro__fallback,
+  .home-intro[data-mode='static'] .home-intro__canvas,
+  .home-intro[data-mode='static'] .home-intro__meta,
+  .home-intro[data-mode='static'] .home-intro__hint {
+    display: none;
+  }
+
+  .home-intro[data-mode='static'] .home-intro__plate {
+    transform: translate3d(-50%, -50%, 0) scale(0.92);
+  }
+
+  @keyframes home-intro-signal {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes home-intro-papers {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes home-intro-circuit {
+    to {
+      opacity: 0.62;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .home-intro__fallback {
+      width: 142%;
+      max-width: none;
+      margin-left: -21%;
+    }
+
+    .home-intro__meta span:last-child,
+    .home-intro__hint {
+      display: none;
+    }
+
+    .home-intro__copy span {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html[data-home-intro='playing'] .site-shell {
+      opacity: 1;
+      filter: none;
+    }
+  }
+</style>
