@@ -6,10 +6,13 @@ import { defineConfig } from 'astro/config';
 import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
 
+import cloudflare from '@astrojs/cloudflare';
+
 export default defineConfig({
   site: process.env.SITE_URL ?? 'https://wuwei-blog.pages.dev',
   output: 'static',
   integrations: [mdx(), sitemap()],
+
   markdown: {
     processor: unified({
       remarkPlugins: [remarkMath],
@@ -24,7 +27,10 @@ export default defineConfig({
       wrap: true,
     },
   },
+
   vite: {
     plugins: [tailwindcss()],
   },
+
+  adapter: cloudflare(),
 });
