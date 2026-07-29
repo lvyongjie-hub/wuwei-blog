@@ -75,7 +75,7 @@ export function mountHomeIntro() {
     visual.style.removeProperty('opacity');
   };
 
-  const finish = (focusMain = false) => {
+  const finish = () => {
     if (!active) return;
     active = false;
     runToken += 1;
@@ -96,7 +96,7 @@ export function mountHomeIntro() {
 
     if (restoreFocus?.isConnected) {
       restoreFocus.focus({ preventScroll: true });
-    } else if (focusMain && main) {
+    } else if (main) {
       main.tabIndex = -1;
       main.focus({ preventScroll: true });
       main.addEventListener('blur', () => main.removeAttribute('tabindex'), { once: true });
@@ -178,6 +178,7 @@ export function mountHomeIntro() {
     overlay.inert = false;
     root.dataset.homeIntro = 'playing';
     setPageObscured(true);
+    skipButton.focus({ preventScroll: true });
 
     safetyTimer = window.setTimeout(() => finish(), 4800);
 
@@ -212,7 +213,7 @@ export function mountHomeIntro() {
 
   skipButton.addEventListener('click', (event) => {
     event.stopPropagation();
-    finish(true);
+    finish();
   });
   overlay.addEventListener('pointerdown', (event) => {
     if (event.target instanceof HTMLButtonElement) return;
@@ -231,7 +232,7 @@ export function mountHomeIntro() {
   document.addEventListener('keydown', (event) => {
     if (!active || event.key !== 'Escape') return;
     event.preventDefault();
-    finish(true);
+    finish();
   });
   window.addEventListener('resize', () => {
     targetRect = selectTransitionTarget();
